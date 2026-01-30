@@ -4,7 +4,7 @@
 
 Urban trees play a crucial role in improving air quality, mitigating urban heat, and enhancing the quality of life in cities. Municipal governments and urban planners often maintain detailed inventories of trees to monitor their condition and plan maintenance activities.
 
-Lisbon_GreenGrid is an urban tree inventory & maintenance management system. This project aims to develop a simple yet robust system for managing urban trees in a city. The system stores spatial information about trees, their species, size, location, other relevant info, and the authority responsible for maintenance. It enables city planners or maintenance teams to efficiently query, insert, update, and manage tree-related data through an API.
+Lisbon_GreenGrid is an urban tree inventory & maintenance management system. This project aims to develop a simple yet robust system for managing urban trees in Lisbon city. The system stores spatial information about trees, their species, size, location, other relevant info, and the authority responsible for maintenance. It enables city planners or maintenance teams to efficiently query, insert, update, and manage tree-related data through an API.
 
 ---
 
