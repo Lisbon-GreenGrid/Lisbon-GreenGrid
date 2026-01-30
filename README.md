@@ -1,17 +1,10 @@
-# Urban Tree Inventory & Maintenance Management System
+# Lisbon_GreenGrid
 
 ## 1. Introduction
 
 Urban trees play a crucial role in improving air quality, mitigating urban heat, and enhancing the quality of life in cities. Municipal governments and urban planners often maintain detailed inventories of trees to monitor their condition and plan maintenance activities.
 
-This project implements an **Urban Tree Inventory & Maintenance Management System** that stores, manages, and exposes information about urban trees through a relational spatial database and a RESTful API.
-
-The system is designed to be **simple, robust, and compliant with all course requirements**, while demonstrating practical usage of:
-
-* Extract, Transform, Load (ETL) pipelines
-* PostgreSQL with PostGIS
-* CRUD operations
-* Python-based REST APIs
+Lisbon_GreenGrid is an urban tree inventory & maintenance management system. This project aims to develop a simple yet robust system for managing urban trees in a city. The system stores spatial information about trees, their species, size, location, other relevant info, and the authority responsible for maintenance. It enables city planners or maintenance teams to efficiently query, insert, update, and manage tree-related data through an API.
 
 ---
 
@@ -21,7 +14,7 @@ The main objectives of this project are:
 
 * To design a relational spatial database for managing urban tree data
 * To build an independent ETL module that loads open urban tree data into the database
-* To expose database operations through a RESTful API
+* To expose database operations through an API
 * To support full Create, Read, Update, and Delete (CRUD) operations
 * To demonstrate spatial querying using PostGIS
 
@@ -38,7 +31,7 @@ Open Data (CSV / GeoJSON)
         ↓
 PostgreSQL + PostGIS
         ↓
-   REST API (Python)
+  API (Python)
 ```
 
 Each component is independent and can be executed or tested separately.
@@ -47,18 +40,18 @@ Each component is independent and can be executed or tested separately.
 
 ## 4. Dataset
 
-The project uses **open-access urban tree datasets**, typically provided by:
+The project will use **open-access urban tree datasets**, typically provided by:
 
-* Municipal open data portals
-* OpenStreetMap exports
+* Lisbon open data portal (Portal Dados Abertos): https://dados.cm-lisboa.pt/dataset/arvoredo 
+* OpenStreetMap
 
-The datasets include geographic coordinates, species information, and basic tree attributes. All datasets used are open source and free to use.
+The datasets include geographic coordinates, species information, and basic tree attributes. All datasets proposed are open source and free to use.
 
 ---
 
 ## 5. Database Design
 
-The database is implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
+The database will be implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
 
 ### 5.1 Main Tables
 
@@ -66,21 +59,21 @@ The database is implemented in **PostgreSQL with the PostGIS extension** and fol
 | -------------------- | -------------------------------------------- | ------------ |
 | `trees`              | Individual urban trees and their locations   | POINT        |
 | `species`            | Reference table for tree species             | No           |
-| `health_inspections` | Tree health assessment records               | No           |
-| `maintenance_events` | Maintenance actions (pruning, removal, etc.) | No           |
+| `Location Type`      | Is the tree locate in a street, road or park | No           |
+| `maintenance_Authority` | Is it maintained by the JF or CML         | No           |
 | `districts`          | Administrative districts of the city         | POLYGON      |
 
-This design satisfies the requirement of **at least five entities**, including **spatial data**.
 
 ### 5.2 Core Table: `trees`
 
 Key attributes:
 
 * `tree_id` (Primary Key)
-* `species_id` (Foreign Key)
-* `district_id` (Foreign Key)
-* `planting_date`
-* `height_m`
+* `species` (Foreign Key)
+* `district` (Foreign Key)
+* `PAP`
+* `common_name`
+* `household`
 * `geom` (POINT geometry, SRID 4326)
 
 ---
@@ -89,11 +82,11 @@ Key attributes:
 
 ### 6.1 Purpose
 
-The ETL module is responsible for extracting raw tree data, transforming it into a clean and consistent format, and loading it into the PostgreSQL/PostGIS database.
+The ETL module will be responsible for extracting raw tree data, transforming it into a clean and consistent format, and loading it into the PostgreSQL/PostGIS database.
 
 ### 6.2 Execution
 
-The ETL runs independently using a single command:
+The ETL will run independently using a single command:
 
 ```bash
 python etl/load_trees.py
@@ -119,7 +112,7 @@ The project supports full CRUD functionality:
 * **Update** tree attributes and maintenance records
 * **Delete** obsolete or removed trees
 
-CRUD operations are exposed through the API and executed against the relational database.
+CRUD operations will be exposed through the API and executed against the relational database.
 
 ---
 
@@ -127,6 +120,7 @@ CRUD operations are exposed through the API and executed against the relational 
 
 ### 8.1 Technology Stack
 
+Proposed technology include:
 * Python
 * FastAPI or Flask
 * psycopg2 or SQLAlchemy
@@ -142,77 +136,12 @@ CRUD operations are exposed through the API and executed against the relational 
 | DELETE | `/trees/{id}`                   | Delete a tree                     |
 | GET    | `/trees/near?lat=&lon=&radius=` | Find nearby trees (spatial query) |
 
-The spatial query endpoint demonstrates the use of PostGIS for distance-based searches.
+The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches.
 
----
 
-## 9. Project Structure
+## 9. Authors
 
-```
-urban-tree-inventory/
-├── etl/
-│   ├── load_trees.py
-│   └── README.md
-├── api/
-│   ├── main.py
-│   ├── routes/
-│   └── README.md
-├── db/
-│   ├── schema.sql
-│   └── seed.sql
-├── environment.yml
-└── README.md
-```
+* Christian Oluoma (20250854)
+* Saba Fatima (20250858)
+* Adebola Adedayo (20250853)
 
----
-
-## 10. Installation & Setup
-
-1. Create and activate the Conda environment:
-
-   ```bash
-   conda create -n gps_python_intro
-   conda activate gps_python_intro
-   ```
-
-2. Install dependencies using the provided `environment.yml` file.
-
-3. Ensure PostgreSQL and PostGIS are installed and running.
-
-4. Create the database and enable PostGIS.
-
----
-
-## 11. Results and Demonstration
-
-The system successfully:
-
-* Loads open urban tree data using the ETL pipeline
-* Stores spatial data in PostGIS
-* Exposes CRUD operations via a REST API
-* Performs spatial queries to locate nearby trees
-
-The project can be demonstrated using Postman and optionally visualized in QGIS.
-
----
-
-## 12. Conclusions
-
-This project demonstrates how ETL pipelines, relational spatial databases, and REST APIs can be combined to build a practical urban management application. The system is intentionally simple, robust, and extensible, making it suitable for real-world municipal use cases.
-
----
-
-## 13. Future Work
-
-Possible future improvements include:
-
-* Web-based map visualization (Leaflet)
-* Authentication and user roles
-* Advanced spatial analytics
-* Automated data updates
-
----
-
-## 14. Authors
-
-*Group members to be listed here*
