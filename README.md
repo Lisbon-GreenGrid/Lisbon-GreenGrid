@@ -74,7 +74,7 @@ Key attributes:
 * `PAP`
 * `common_name`
 * `household`
-* `geom` (POINT geometry, SRID 4326)
+* `geom` (POINT geometry, SRID 20790)
 
 ---
 
