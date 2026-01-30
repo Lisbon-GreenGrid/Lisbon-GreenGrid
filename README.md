@@ -59,7 +59,7 @@ The database will be implemented in **PostgreSQL with the PostGIS extension** an
 | -------------------- | -------------------------------------------- | ------------ |
 | `trees`              | Individual urban trees and their locations   | POINT        |
 | `species`            | Reference table for tree species             | No           |
-| `Location Type`      | Is the tree locate in a street, road or park | No           |
+| `Location Type`      | Is the tree located in a street, road or park | No           |
 | `maintenance_Authority` | Is it maintained by the JF or CML         | No           |
 | `districts`          | Administrative districts of the city         | POLYGON      |
 
@@ -141,7 +141,7 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 ## 9. Authors
 
-* Christian Oluoma (20250854)
-* Saba Fatima (20250858)
-* Adebola Adedayo (20250853)
+* #### Christian Oluoma (20250854)
+* #### Saba Fatima (20250858)
+* #### Adebola Adedayo (20250853)
 
