@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS sa.trees
     tipologia VARCHAR(100),            -- Tree type
     pap VARCHAR(50),                   -- Perimeter at breast height
     ocupacao VARCHAR(100),             -- Occupation
-    local VARCHAR(255),                -- location
+    local VARCHAR(255),                -- Location
     morada VARCHAR(255),               -- Address
     freg_2012 VARCHAR(100),            -- Parish name
     geometry GEOMETRY(Point, 20790)
