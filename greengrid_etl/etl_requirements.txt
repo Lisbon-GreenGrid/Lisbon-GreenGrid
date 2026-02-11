@@ -1,6 +1,13 @@
-requests
+python
+requests  
 geopandas
 PyYAML
 pyarrow
 SQLAlchemy
-psycopg2-binary
+psycopg2
+pandas
+numpy
+shapely
+fiona
+pyproj
+apscheduler
