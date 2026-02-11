@@ -1,0 +1,6 @@
+requests
+geopandas
+PyYAML
+pyarrow
+SQLAlchemy
+psycopg2-binary
