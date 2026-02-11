@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS pa.operations
 	op_description VARCHAR(255) NOT NULL	-- The description of the operation done
 );
 
--- SEED DATA: Pre-defining the operation types
+-- SEED DATA: Pre-defined operation types
 INSERT INTO pa.operations (op_code, op_description) 
 VALUES
 (1, 'Pruning (Poda)'),
@@ -39,9 +39,9 @@ DROP TABLE IF EXISTS pa.maintenance CASCADE;
 CREATE TABLE IF NOT EXISTS pa.maintenance
 (
     maintenance_id SERIAL PRIMARY KEY, 	 	  		 					  -- Internal unique ID based on every maintenance done
-    tree_id INTEGER REFERENCES pa.trees(tree_id) ON DELETE CASCADE, 	  -- Links to the sa.tree table
-    op_code INTEGER REFERENCES pa.operations(op_code),
-    maint_date DATE NOT NULL
+    tree_id INTEGER REFERENCES pa.trees(tree_id) ON DELETE CASCADE, 	  -- Links to the pa.tree table
+    op_code INTEGER REFERENCES pa.operations(op_code),					  -- Links to the pa.operations table
+    maint_date DATE NOT NULL											  -- Date of maintenance operation
 );
 
 -- Table: pa.parish
@@ -50,8 +50,6 @@ CREATE TABLE IF NOT EXISTS pa.parish
 ( 
 	id SERIAL NOT NULL PRIMARY KEY,  		  -- geopackage name (dtmnfr)
     freguesia VARCHAR(100) UNIQUE,			  -- parish name
-	area_m2 FLOAT,							  -- Area in square meters
-	length_m FLOAT,							  -- Perimeter in meters
     geom GEOMETRY(Polygon, 3763) NOT NULL     -- Boundary shape
 );
 
