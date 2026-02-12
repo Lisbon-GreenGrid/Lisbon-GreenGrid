@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS pa.maintenance
 DROP TABLE IF EXISTS pa.parish CASCADE;
 CREATE TABLE IF NOT EXISTS pa.parish
 ( 
-	id SERIAL NOT NULL PRIMARY KEY,  		  -- geopackage name (dtmnfr)
+	id VARCHAR(100) PRIMARY KEY,  		  -- geopackage name (dtmnfr)
     freguesia VARCHAR(100) UNIQUE,			  -- parish name
     geom GEOMETRY(Polygon, 3763) NOT NULL     -- Boundary shape
 );
