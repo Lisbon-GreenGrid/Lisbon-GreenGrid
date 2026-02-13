@@ -17,14 +17,14 @@ def build_structure():
     db_params = {
         "database": "lisbon_greengrid", # Ensure this DB is already created manually on PostgreSQL
         "user": "postgres",
-        "password": "polarIS123$", # Use appropriate password
+        "password": "postgres", # Use appropriate password
         "host": "localhost", # Change if your DB is on another server
         "port": "5432", # Default PostgreSQL port
         "options": "-c client_encoding=UTF8"
     }
 
     # Directory containing the SQL files
-    sql_folder = r"C:\Users\Victus\Documents\GitHub\Lisbon-GreenGrid\db"  # Update with your folder path
+    sql_folder = r"C:\Users\Lisbon-GreenGrid\db"  # Update with your folder path
     
     # List of SQL files
     sql_files = [
