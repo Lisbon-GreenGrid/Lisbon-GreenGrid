@@ -9,6 +9,6 @@ pandas
 ipykernel
 numpy
 shapely
-fiona
 pyproj
 apscheduler
+geoalchemy2
