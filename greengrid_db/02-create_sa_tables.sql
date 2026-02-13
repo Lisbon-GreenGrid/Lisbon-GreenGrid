@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS sa.trees
     local VARCHAR(255),                -- Location
     morada VARCHAR(255),               -- Address
     freguesia VARCHAR(100),            -- Parish name
-    geom GEOMETRY(Point, 4326)
+    geometry GEOMETRY(Point, 4326)
 );
