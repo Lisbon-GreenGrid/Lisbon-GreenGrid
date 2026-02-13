@@ -1,9 +1,9 @@
 -- These will allow the map to zoom and find trees or parishes instantly
 CREATE INDEX IF NOT EXISTS idx_trees_geom 
-    ON pa.trees USING GIST (geom);
+    ON pa.trees USING GIST (geometry);
 
 CREATE INDEX IF NOT EXISTS idx_parish_geom 
-    ON pa.parish USING GIST (geom);
+    ON pa.parish USING GIST (geometry);
 
 
 -- These will help access the pa.maintenance and pa.comments tables quickly

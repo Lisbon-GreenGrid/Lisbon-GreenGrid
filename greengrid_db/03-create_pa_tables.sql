@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS pa.parish
 ( 
 	id VARCHAR(100) PRIMARY KEY,  		  -- geopackage name (dtmnfr)
     freguesia VARCHAR(100) UNIQUE,			  -- parish name
-    geom GEOMETRY(Polygon, 4326) NOT NULL     -- Boundary shape
+    geometry GEOMETRY(MultiPolygon, 4326) NOT NULL     -- Boundary shape
 );
 
 -- Table: pa.users
