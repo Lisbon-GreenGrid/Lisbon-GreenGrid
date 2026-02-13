@@ -1,0 +1,20 @@
+database:
+  database: lisbon_greengrid
+  host: localhost
+  port: 5432
+  username: postgres
+  password: 20250854
+url: https://services.arcgis.com/1dSrzEWVQn5kHHyK/arcgis/rest/services/Ambiente_DMEVAE/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson
+fname: trees.geojson
+columns:
+- tree_id
+- nome_vulga
+- especie
+- tipologia
+- pap
+- manutencao
+- ocupacao
+- local
+- morada
+- freguesia
+- geom
