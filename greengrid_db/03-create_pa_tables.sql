@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS pa.trees
     local VARCHAR(255),                
     morada VARCHAR(255),               
     freguesia VARCHAR(100),            
-    geom GEOMETRY(Point, 4326)
+    geometry GEOMETRY(Point, 4326)
 );	
 
 -- Table: pa.operations
