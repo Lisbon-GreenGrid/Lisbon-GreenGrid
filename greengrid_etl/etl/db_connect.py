@@ -1,6 +1,8 @@
 from .logs import die
 import sqlalchemy as sql
+import geoalchemy2
 import pandas as pd
+import geopandas as gpd
 
 
 class DBController:
@@ -28,11 +30,11 @@ class DBController:
             die(f"select_data: {e}")
         return df
 
-    def insert_data(self, df: pd.DataFrame, schema: str, table: str, chunksize: int=100) -> None:
+    def insert_data(self, gdf: gpd.GeoDataFrame, schema: str, table: str, chunksize: int=100) -> None:
         """This function abstracts the `INSERT` queries
 
         Args:
-            df (pd.DataFrame): dataframe to be inserted
+            gdf (gpd.GeoDataFrame): geodataframe to be inserted
             schema (str): the name of the schema
             table (str): the name of the table
             chunksize (int): the number of rows to insert at the time
@@ -41,10 +43,10 @@ class DBController:
             engine = sql.create_engine(self.uri)
             with engine.connect() as con:
                 tran = con.begin()
-                df.to_sql(
+                gdf.to_postgis(
                     name=table, schema=schema,
-                    con=con, if_exists="append", index=False,
-                    chunksize=chunksize, method="multi"
+                    con=con, if_exists="replace", index=False,
+                    chunksize=chunksize
                 )
                 tran.commit()
         except Exception as e:
