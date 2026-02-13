@@ -1,8 +1,0 @@
-#Database files to create
-
-00-create_db.sql
-01-create_schemas.sql
-02-create_tables.sql
-03-create_indexes.sql
-04-create_triggers.sql
-create_db.py

@@ -6,6 +6,7 @@ pyarrow
 SQLAlchemy
 psycopg2
 pandas
+ipykernel
 numpy
 shapely
 fiona

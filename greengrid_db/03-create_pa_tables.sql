@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS pa.trees CASCADE;
 CREATE TABLE IF NOT EXISTS pa.trees
 (
     tree_id INTEGER PRIMARY KEY,   	   
-    nome_vulgar VARCHAR(255),          
+    nome_vulga VARCHAR(255),          
     especie VARCHAR(255),              
     tipologia VARCHAR(100),            
     pap NUMERIC(10, 2),
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS pa.trees
     local VARCHAR(255),                
     morada VARCHAR(255),               
     freguesia VARCHAR(100),            
-    geom GEOMETRY(Point, 3763)
+    geom GEOMETRY(Point, 4326)
 );	
 
 -- Table: pa.operations
@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS pa.maintenance
 DROP TABLE IF EXISTS pa.parish CASCADE;
 CREATE TABLE IF NOT EXISTS pa.parish
 ( 
-	id SERIAL NOT NULL PRIMARY KEY,  		  -- geopackage name (dtmnfr)
+	id VARCHAR(100) PRIMARY KEY,  		  -- geopackage name (dtmnfr)
     freguesia VARCHAR(100) UNIQUE,			  -- parish name
-    geom GEOMETRY(Polygon, 3763) NOT NULL     -- Boundary shape
+    geom GEOMETRY(Polygon, 4326) NOT NULL     -- Boundary shape
 );
 
 -- Table: pa.users
