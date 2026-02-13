@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS pa.maintenance
     maintenance_id SERIAL PRIMARY KEY, 	 	  		 					  -- Internal unique ID based on every maintenance done
     tree_id INTEGER REFERENCES pa.trees(tree_id) ON DELETE CASCADE, 	  -- Links to the pa.tree table
     op_code INTEGER REFERENCES pa.operations(op_code),					  -- Links to the pa.operations table
+	observation VARCHAR(255),											  -- Observation made during maintenance operation
+	officer VARCHAR(100),												  -- The person making the observation
     maint_date DATE NOT NULL											  -- Date of maintenance operation
 );
 
@@ -48,9 +50,9 @@ CREATE TABLE IF NOT EXISTS pa.maintenance
 DROP TABLE IF EXISTS pa.parish CASCADE;
 CREATE TABLE IF NOT EXISTS pa.parish
 ( 
-	id VARCHAR(100) PRIMARY KEY,  		  -- geopackage name (dtmnfr)
-    freguesia VARCHAR(100) UNIQUE,			  -- parish name
-    geometry GEOMETRY(MultiPolygon, 4326) NOT NULL     -- Boundary shape
+	id VARCHAR(100) PRIMARY KEY,  		 			 -- geopackage name (dtmnfr)
+    freguesia VARCHAR(100) UNIQUE,			 		 -- parish name
+    geometry GEOMETRY(MultiPolygon, 4326) NOT NULL   -- Boundary shape
 );
 
 -- Table: pa.users
