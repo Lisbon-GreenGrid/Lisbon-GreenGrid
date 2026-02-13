@@ -14,13 +14,13 @@ def run_migration():
         None:
     """
     # Directory containing the SQL file
-    sql_folder = r"C:\Users\Victus\Documents\GitHub\Lisbon-GreenGrid\db"  # Update with your folder path 
+    sql_folder = r"C:\Users\Lisbon-GreenGrid\db"  # Update with your folder path 
     migration_file = "06-migration.sql" # The migration SQL file
 
     db_params = {
         "database": "lisbon_greengrid", # Ensure this DB is already created manually
         "user": "postgres",
-        "password": "polarIS123$", # Use appropriate password
+        "password": "postgres", # Use appropriate password
         "host": "localhost", # Change if your DB is on another server
         "port": "5432", # Default PostgreSQL port
         "options": "-c client_encoding=UTF8"
