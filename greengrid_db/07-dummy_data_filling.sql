@@ -17,14 +17,13 @@ INSERT INTO pa.users (username, first_name, last_name, email) VALUES
 ('city_worker', 'João', 'Santos', 'joao.s@lisboa.pt'),
 ('tree_checker', 'Sofia', 'Mendes', 'sofia.m@example.com');
 
--- 4. FILL pa.parish (Spatial boundaries for Lisbon districts)
-INSERT INTO pa.parish (id, freguesia, geom) VALUES
-('110608', 'Estrela', ST_GeomFromText('POLYGON((-9.16 38.71, -9.15 38.71, -9.15 38.72, -9.16 38.72, -9.16 38.71))', 4326)),
-('110602', 'Alvalade', ST_GeomFromText('POLYGON((-9.15 38.74, -9.14 38.74, -9.14 38.75, -9.15 38.75, -9.15 38.74))', 4326)),
-('110611', 'Belém', ST_GeomFromText('POLYGON((-9.22 38.69, -9.21 38.69, -9.21 38.70, -9.22 38.70, -9.22 38.69))', 4326));
+-- 4. FILL pa.parish (Using the parish shapefile)
+INSERT INTO pa.parish (id, freguesia, geometry)
+SELECT  id,  freguesia, ST_Multi(geom)
+FROM public.lisbon_parishes;
 
 -- 5. FILL pa.trees (The core inventory)
-INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, pap, manutencao, ocupacao, local, morada, freguesia, geom) VALUES
+INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, pap, manutencao, ocupacao, local, morada, freguesia, geometry) VALUES
 (1, 'Oliveira', 'Olea europaea', 'Tree', 45.0, 'Regular', 'Public', 'Jardim da Estrela', 'Praça da Estrela', 'Estrela', ST_SetSRID(ST_MakePoint(-9.1594, 38.7137), 4326)),
 (2, 'Jacarandá', 'Jacaranda mimosifolia', 'Tree', 30.0, 'Regular', 'Public', 'Av. Liberdade', 'Avenida da Liberdade', 'Santo António', ST_SetSRID(ST_MakePoint(-9.1462, 38.7215), 4326)),
 (3, 'Pinheiro Manso', 'Pinus pinea', 'Conifer', 60.5, 'Intensive', 'Public', 'Monsanto', 'Estrada de Monsanto', 'Benfica', ST_SetSRID(ST_MakePoint(-9.1850, 38.7400), 4326)),
@@ -40,6 +39,10 @@ INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, pap, manutencao, 
 INSERT INTO pa.maintenance (tree_id, op_code, maint_date) VALUES
 (1, 4, '2026-01-10'), -- Tree 1: Visual Inspection
 (1, 1, '2026-02-05'), -- Tree 1: Pruning
+(1, 2, '2026-01-20'), -- Tree 1: Pest Control
+(1, 4, '2026-02-11'), -- Tree 1: Visual Inspection
+(1, 6, '2024-11-15'), -- Tree 1: Planting
+(1, 3, '2026-02-12'); -- Tree 1: Fertilization
 (2, 3, '2025-12-01'), -- Tree 2: Fertilization
 (3, 2, '2026-01-20'), -- Tree 3: Pest Control
 (5, 4, '2026-02-11'), -- Tree 5: Visual Inspection
@@ -55,5 +58,10 @@ INSERT INTO pa.comments (username, tree_id, comment, created_at) VALUES
 ('pak_student', 2, 'The Jacarandas in Av. Liberdade are iconic.', '2026-02-10 12:00:00'),
 ('nature_fan', 1, 'Sat under this tree today. The shade is perfect for a summer afternoon.', '2026-02-13 10:00:00'),
 ('city_worker', 1, 'Verified the species; it is indeed a very old Olea europaea.', '2026-02-13 11:30:00'),
+('pak_student', 1, 'Noticed some new growth on the lower branches today. Looking healthy!', '2026-02-13 12:45:00'),
+('tree_checker', 1, 'Great spot to study near NOVA IMS. Very peaceful atmosphere.', '2026-02-13 14:20:00'),
+('city_worker', 1, 'I hope the city continues to protect these monumental olive trees.', '2026-02-13 15:10:00'),
+('nature_fan', 1, 'This tree is my favorite landmark during my morning jogs through the park.', '2026-02-13 16:30:00'),
+('nature_fan', 1, 'The lighting on the bark at sunset is absolutely stunning for macro shots.', '2026-02-13 17:15:00'),
 ('nature_fan', 5, 'I noticed the bark is being harvested. Very cool to see!', '2026-02-12 09:00:00'),
 ('tree_checker', 5, 'Structural integrity looks good after the high winds.', '2026-02-13 08:45:00');

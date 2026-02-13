@@ -29,48 +29,57 @@ def get_all_trees():
     conn.close()
     return jsonify(rows)
 
-# 2. GET SPECIFIC TREE (Details + Latest Maintenance + Latest Comment)
+# 2. GET TREE DETAILS BY ID
 @app.route('/tree/<int:id>', methods=['GET'])
 def get_tree_details(id):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT t.*, ST_AsGeoJSON(t.geom) as geometry,
-        (SELECT op_description FROM pa.maintenance m 
-         JOIN pa.operations o ON m.op_code = o.op_code 
-         WHERE m.tree_id = t.tree_id ORDER BY maint_date DESC LIMIT 1) as latest_maintenance,
-        (SELECT comment FROM pa.comments c WHERE c.tree_id = t.tree_id ORDER BY created_at DESC LIMIT 1) as latest_comment
-        FROM pa.trees t WHERE t.tree_id = %s
+        SELECT *, ST_AsGeoJSON(geom) as geometry 
+        FROM pa.trees 
+        WHERE tree_id = %s
     """, (id,))
     tree = cur.fetchone()
     cur.close()
     conn.close()
     return jsonify(tree if tree else {"error": "Tree not found"})
 
-# 3. GET COMMENT HISTORY BY TREE ID
+# 3. GET COMMENT HISTORY BY TREE ID (with optional 'limit' parameter)
 @app.route('/tree/<int:id>/comments', methods=['GET'])
 def get_comment_history(id):
+    # default limit is 10 if not provided
+    limit = request.args.get('limit', default=10, type=int)
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM pa.comments WHERE tree_id = %s ORDER BY created_at DESC", (id,))
+    cur.execute("""
+        SELECT username, comment, created_at 
+        FROM pa.comments 
+        WHERE tree_id = %s 
+        ORDER BY created_at DESC 
+        LIMIT %s
+    """, (id, limit))
     comments = cur.fetchall()
     cur.close()
     conn.close()
     return jsonify(comments)
 
-# 4. GET MAINTENANCE HISTORY BY TREE ID
+# 4. GET MAINTENANCE HISTORY BY TREE ID (with optional 'limit' parameter)
 @app.route('/tree/<int:id>/maintenance', methods=['GET'])
 def get_maintenance_history(id):
+    # default limit is 5 if not provided
+    limit = request.args.get('limit', default=5, type=int)
+
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT m.maint_date, m.maint_date, o.op_description, t.manutencao AS maintenance_authority
+        SELECT m.maint_date, o.op_description, t.manutencao AS maintenance_authority
         FROM pa.maintenance m
         JOIN pa.operations o ON m.op_code = o.op_code
         JOIN pa.trees t ON m.tree_id = t.tree_id
         WHERE m.tree_id = %s 
         ORDER BY m.maint_date DESC
-    """, (id,))
+        LIMIT %s
+    """, (id, limit))
     history = cur.fetchall()
     cur.close()
     conn.close()
@@ -86,34 +95,6 @@ def delete_tree(id):
     cur.close()
     conn.close()
     return jsonify({"message": f"Tree {id} and its associated records deleted."})
-
-# # 6. EDIT TREE + ADD COMMENT (Merged)
-# @app.route('/tree/<int:id>/update', methods=['PUT'])
-# def edit_tree_and_comment(id):
-#     data = request.json
-#     conn = get_db_connection()
-#     cur = conn.cursor()
-#     try:
-#         # Update Tree Info
-#         cur.execute("""
-#             UPDATE pa.trees SET nome_vulga = %s, especie = %s, tipologia = %s, morada = %s
-#             WHERE tree_id = %s
-#         """, (data.get('nome_vulga'), data.get('especie'), data.get('tipologia'), data.get('morada'), id))
-        
-#         # Add Comment if provided
-#         if data.get('comment') and data.get('username'):
-#             cur.execute("""
-#                 INSERT INTO pa.comments (username, tree_id, comment) VALUES (%s, %s, %s)
-#             """, (data['username'], id, data['comment']))
-        
-#         conn.commit()
-#         return jsonify({"message": "Update successful"})
-#     except Exception as e:
-#         conn.rollback()
-#         return jsonify({"error": str(e)}), 500
-#     finally:
-#         cur.close()
-#         conn.close()
 
 # 6. EDIT TREE DETAILS
 @app.route('/tree/<int:id>', methods=['PUT'])
@@ -183,7 +164,7 @@ def add_maintenance(id):
 def get_trees_by_freguesia(name):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT *, ST_AsGeoJSON(geom) as geometry FROM pa.trees WHERE freguesia = %s", (name,))
+    cur.execute("SELECT *, ST_AsGeoJSON(geom) as geometry FROM pa.trees WHERE freguesia ILIKE %s", (f"%{name}%",))
     rows = cur.fetchall()
     cur.close()
     conn.close()
