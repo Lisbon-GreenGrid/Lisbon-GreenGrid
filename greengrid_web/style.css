@@ -1,0 +1,453 @@
+/* Colors Dark and Light Mode, Transitions, Text and Body */
+:root{
+    /* Colors Light Mode*/
+    --body-color: #f0f4f1;
+    --sidebar-color: #ffffff;
+    --primary-color: #2d5a27;
+    --primary-color-light: #d8e8d5;
+    --toggle-color: #bbbbbb;
+    --text-color: #1a1a1a;
+    --accent-colour: #f4b400; /* Lisbon Gold / Sunlight Yellow */
+    /* Transition */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
+}
+body.dark{
+    /* Colors Dark Mode*/
+    --body-color: #191a18;
+    --sidebar-color: #242624;;
+    --primary-color: #bfe5c8;
+    --primary-color-light: #3a3c3b;
+    --toggle-color: #dddddd;
+    --text-color: #e7e7e7;
+    --accent-colour: #ffcc33; /* A brighter, more 'neon' gold for the dark */
+}
+/*Styling of the text*/
+.justify-text{
+    text-align: justify;
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&display=swap');
+body {
+    font-family: 'Inter', sans-serif; /* Clean font for data and lists */
+}
+
+.sidebar .name {
+    font-family: 'Montserrat', sans-serif; /* Bold font for the "GreenGrid" title */
+    font-weight: 700;
+}
+/*Styling of button */
+button{
+    background-color: var(--primary-color-light); /* Dynamic background color transition */
+    color:var(--text-color); /* Dynamic text color */
+    height:30px;
+    margin: 10px 0;
+    font-size:15px;
+    font-weight: 600;
+    width:100%;
+    border: none; /* Removes the ugly default line */
+    border-radius: 8px; /* Makes it look modern and rounded */
+    cursor: pointer;
+    transition: var(--tran-03);
+}
+button:hover{
+    background-color: #1e3d1a; /* Darker green on hover */
+    transform: translateY(-2px); /* Makes button "pop" up slightly */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+
+input{
+    height:25px;
+    margin: 10px 0;
+    font-size:16px;
+    width: 97%;
+}
+
+textarea{
+    height:50px;
+    margin: 10px 0;
+    font-size:16px;
+    width: 97%;
+}
+
+/* Map from OSM */
+#leaflet{
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+/* Logo */
+.sidebar .logo-text img{
+    height: 80px;
+    width: 80px;
+}
+.sidebar.close .logo{
+    opacity: 1;
+}
+ /* Sidebar and its function styling */
+.sidebar{
+    position: fixed;
+    top:0;
+    left: 0;
+    height: 100%;
+    width: 400px;
+    padding: 10px 14px;
+    background-color: var(--sidebar-color); /*Dynamic sidebaer color*/
+    border-right: 1px solid #e0e0e0; /* Subtle grey separator from the map */
+    box-shadow: 4px 0px 10px rgba(0,0,0,0.05); /* Soft shadow */
+    transition: var(--tran-05); /*Dynamic transition*/
+    z-index: 1;
+    overflow-y: auto;
+}
+.sidebar.close{
+    width: 72px;
+}
+.sidebar::-webkit-scrollbar{
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar{
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+}
+.sidebar::-webkit-scrollbar-track{
+    background: transparent;
+}
+/* Sidebar content (text, toggles, search box, arrow and icons)*/
+/*Text*/
+.sidebar .text{
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-color); /* Dynamic text color */
+    transition: var(--tran-03); /*Dynamic transition*/
+}
+.sidebar.close .text{
+    opacity: 0;
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+.sidebar header{
+    position: relative;
+    display: flex;
+}
+.sidebar .name{
+    white-space: nowrap;
+    transition: var(--tran-02); /*Dynamic transition*/
+    font-size: 40px;
+}
+.sidebar .justify-text{
+    opacity: 1;
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+.sidebar.close .justify-text{
+    opacity: 0;
+    display:none;
+}
+/*Toggle*/
+.sidebar header .toggle{
+    position: absolute;
+    top: 48%;
+    right: 10px;
+    transform: translateY(-50%) rotate(180deg); /*Show close option when opened*/
+    height: 30px;
+    width: 30px;
+    background: var(--accent-colour); /* Changed from primary to gold */
+    display: flex;
+    align-items: center;
+    border-radius:50%;
+    color: var(--sidebar-color); /*Dynamic sidebar color*/
+    font-size: 30px;
+    z-index: 1000;
+}
+.sidebar.close header .toggle{
+    transform: translateY(-50%); /*Show open option when closed*/
+    top: 70%;
+}
+/*Search box */
+.sidebar .search-box{
+    border-radius: 6px;
+    background: #f0f2f0; /* Very light grey-green */
+    border: 1px solid #d1d8d1;
+}
+.search-box input{
+    height: 100%;
+    width: 100%;
+    outline:none;
+    border:none;
+    border-radius: 6px;
+    color: var(--text-color); /* Dynamic text color */
+    background: var(--primary-color-light); /* Dynamic background color transition */
+}
+/* Icons and arrow*/
+.sidebar li{
+    height: 50px;
+    margin-top: 20px;
+    list-style: none;
+    display:flex;
+    align-items:center;  
+}
+.sidebar li .icon{
+    display:flex;
+    color: var(--primary-color); /*Dynamic primary color*/
+    align-items:center;
+    justify-content: center;
+    min-width: 60px;
+    font-size:22px;
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+.sidebar li .arrow{
+    display:flex;
+    color: var(--primary-color); /*Dynamic primary color*/
+    align-items:center;
+    justify-content: center;
+    min-width: 100px;
+    font-size:22px;
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+.sidebar.close .arrow{
+    display: none;
+}
+.sidebar li .text{
+    font-size: 22px;
+    color: var(--text-color); /* Dynamic text color */
+    transition: var(--tran-02); /*Dynamic transition*/
+}
+.sidebar li a{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: var(--tran-04); /*Dynamic transition*/
+}
+.sidebar li a:hover{
+    background: var(--primary-color); /*Dynamic primary color*/
+}
+.sidebar li a:hover .icon,
+.sidebar li a:hover .text{
+    color: var(--accent-colour) !important; /*Dynamic sidebar color*/
+}
+.sidebar li a:hover .arrow{
+    color: var(--sidebar-color); /*Dynamic sidebar color*/
+}
+/*Sidebar menu-bar and mode*/
+.sidebar .menu-bar{
+    height: calc(100% - 40px);
+    display:flex;
+    flex-direction: column;
+}
+/*Mode light and dark */
+.menu-bar .mode{
+    position: relative;
+    background: var(--primary-color-light); /* Dynamic background color transition */
+    border-radius: 6px;
+}
+.menu-bar .mode .moon-sun{
+    height: 40px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+}
+.menu-bar .mode i{
+    position: absolute;
+}
+.menu-bar .mode i.sun{
+    opacity:0;
+}
+body.dark .menu-bar .mode i.sun{
+    opacity: 1;
+}
+body.dark .menu-bar .mode i.moon{
+    opacity: 0;
+}
+.menu-bar .mode .toggle-switch{
+    position: absolute;
+    right: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    cursor: pointer;
+}
+.toggle-switch .switch{
+    position: relative;
+    height: 22px;
+    width: 44px;
+    border-radius: 25px;
+    background: var(--toggle-color); /*Dynamic toggle color*/
+}
+.switch::before{
+    content: '';
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%); /*Move the switch for changin to light or dark mode */
+    background: var(--sidebar-color); /*Dynamic sidebar color */
+}
+body.dark .switch::before{
+    left: 24px;
+}
+/* Sidebar menu-bar sub-menu */
+.sub-menu{
+    margin-left: 10px;
+    display: none;
+}
+.sub-menu a{
+    color: var(--text-color); /*Dynamic text color */
+    display: block;
+    font-size: 16px;
+    padding: 5px 5px;
+    transition: var(--tran-03); /*Dynamic transition */
+}
+.sidebar .sub-menu a:hover{
+    background-color: var(--primary-color-light); /* Dynamic background color transition */
+}
+/*Align the scores to the right */
+#trail1Score, #trail2Score, #trail3Score{
+    margin-left:auto;
+    text-align: right;
+    white-space: nowrap;
+}
+/*Styling of the text for green areas */
+#greenAreasPriorityValue{
+    color: var(--text-color); /* Dynamic text color */
+    text-align: center;
+}
+/*Styling of the text for filters */
+#distanceFilter, #terrainFilter{
+    color: var(--text-color); /*Dynamic text color */
+}
+/* Sidebar menu-bar comments/reviews */
+.comments {
+    color: var(--text-color); /* Dynamic text color */
+    border: 2px solid var(--primary-color); /*Dynamic primary color */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+/*Styling of the header text for review section*/
+#trailTitle, #reviewTitle{
+    color: var(--primary-color); /*Dynamic primary color */
+}
+#reviewForm {
+    background-color: var(--primary-color-light); /* Dynamic background color transition */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /*Apply shadow for styling the box*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* General Input Field Styling */
+#reviewForm input,
+#reviewForm textarea {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /*Apply shadow for styling the box*/
+    text-align: left; 
+}
+/* Same Font Style for Placeholders */
+#reviewForm input::placeholder,
+#reviewForm textarea::placeholder {
+    font-family: inherit; /* Matches the input field's font */
+    font-size: 14px;
+    color: #999;
+}
+/* Style when user clicks on an input */
+#reviewForm input:focus,
+#reviewForm textarea:focus {
+    border-color: var(--primary-color);
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(45, 90, 39, 0.3); /*Apply shadow for styling the box*/
+    outline: none;
+}
+/* Center Align Form Elements */
+#reviewForm .form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+/* Styling for Submit Button */
+#reviewForm .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; 
+    margin-top: 10px;
+}
+#reviewForm button {
+    background-color: #1a9154;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--tran-03); /*Dynamic transition */
+}
+/* Hover Effect for Button */
+#reviewForm button:hover {
+    background-color: #06723c;
+}
+/* Star Rating System */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    font-size: 40px;
+    cursor: pointer;
+}
+.star {
+    color: #ccc; /* Default gray */
+    transition: color 0.3s;
+}
+.star.selected {
+    color: gold; /* Highlighted when selected */
+}
+.contactIcons {
+    display: flex;
+    justify-content: center; 
+    gap: 3px; /* Spacing between icons */
+    margin-top: 5px;
+}
+.contactIcons a {
+    font-size: 18px; 
+    color: var(--primary-color); /*Dynamic primary color*/
+    transition: var(--tran-03); /*Dynamic transition */
+}
+.contactIcons a:hover {
+    color: var(--primary-color); /*Dynamic primary color */
+}
+/*Styling text for green areas */
+#learnMore p {
+    text-align: justify;
+    color: var(--text-color); /*Dynamic text color*/
+    font-size: 14px;
+}
+
+#greenAreasPriority{
+    width: 100%;
+}
+
+#greenAreasPriorityValue{
+    font-size:20px;
+}
