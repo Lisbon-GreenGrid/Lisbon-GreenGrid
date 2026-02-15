@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Lisbon_GreenGrid</title>
+		<link rel="icon" type="image/x-icon" href="tree_logo.ico">
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<!-- Leaflet CSS to render map -->
+		<link type="text/css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />		
+		<link type="text/css" rel="stylesheet" href="style.css" />
+		
+		<!--==CSS==-->
+		<link rel="stylesheet" href="style.css">
+		
+		<!-- CSS Sidebar icons ==-->
+		<link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+		<title>Dashboard Sidebar Menu | Dark-Light Mode</title>
+	</head>
+	
+	<body>
+		<!-- Sidebar navigation -->
+		<nav id = "sidebar" class = "sidebar">
+			<header>
+				
+				<!-- Logo and title -->
+				<div class="logo-text">
+					<h1><img src="tree_logo.ico" alt="logo" class="logo"></h1>
+					<div class="text header-text">
+						<h1><span class="name">Lisbon GreenGrid</span></h1>
+						<p class="justify-text">A smart urban forestry platform that centralizes tree inventory and maintenance data to support informed decision-making, public safety, and sustainable city management.</p>
+					</div>
+					<i class="bx bx-chevron-right toggle"></i>
+				</div>
+			</header>
+			
+			<div class="menu-bar">
+				<div class="menu">
+					<!-- Search box -->
+					<li class="search-box">
+							<i class="bx bx-search icon"></i>
+							<input type="search" id="searchInput" style="font-size: 22px" placeholder="Search...">
+					</li>
+					
+					<!-- Section: Filter by-->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bxs-star icon"></i>
+								<span class="text nav-text">Filter by</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 110px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="nameFilter" style="color: var(--text-color)">Nome Vulga:</label>
+							<input type="text" id="nameFilter" min="0" placeholder="e.g. platano">	
+							<label for="fregFilter" style="color: var(--text-color)">Freguesia:</label>
+							<input type="text" id="fregFilter" min="0" placeholder="e.g. Avenidas Novas">			
+							<label for="localFilter" style="color: var(--text-color)">Local:</label>
+							<select id="localFilter">
+								<option value="">All</option>
+								<option value="Via pública">Via pública</option>
+								<option value="Espaço verde">Espaço verde</option>
+								<option value="Escola">Escola</option>
+								<option value="Privado">Privado</option>
+								<option value="Viveiro">Viveiro</option>
+								<option value="Em atualização">Em atualização</option>
+								<option value="Não identificado">Não identificado</option>
+							</select>
+							<button id="filterButton" style="position: relative;">Filter</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+					
+					<!-- Section: Find a Tree by ID -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="fas fa-search icon"></i>
+								<span class="text nav-text">Find Tree</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 100px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Input Tree ID:</label>
+							<input type="number" id="nameFilter" min="1" placeholder="e.g. 120">	
+							<button id="filterButton" style="position: relative;">Find</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Nearest Tree -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bx-current-location icon"></i>
+								<span class="text nav-text">Nearest Tree</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 75px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="latFilter" style="color: var(--text-color)">Lat:</label>
+							<input type="number" id="latFilter" min="" placeholder="e.g. 38.563768">
+							<label for="lonFilter" style="color: var(--text-color)">Lon:</label>
+							<input type="number" id="lonFilter" min="" placeholder="e.g. -9.586967">
+							<label for="radiusFilter" style="color: var(--text-color)">Radius (metres):</label>
+							<input type="number" id="radiusFilter" min="1" placeholder="e.g. 100">
+							<label for="specieFilter" style="color: var(--text-color)">Especie:</label>
+							<input type="text" id="specieFilter" min="" placeholder="e.g. Platanus sp.">
+							<button id="filterButton" style="position: relative;">Find</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Create New Tree-->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bxs-add-to-queue icon"></i>
+								<span class="text nav-text">Create Tree</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 82px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="treeid" style="color: var(--text-color)">Input Tree ID:</label>
+							<input type="number" id="treeid" min="1" placeholder="e.g. 10">
+							<label for="name" style="color: var(--text-color)">Input Nome Vulga:</label>
+							<input type="text" id="name" min="" placeholder="e.g. platano">
+							<label for="especie" style="color: var(--text-color)">Input Especie:</label>
+							<input type="text" id="especie" min="" placeholder="e.g. Platanus sp.">
+							<label for="tipologia" style="color: var(--text-color)">Input Tipologia:</label>
+							<input type="text" id="tipologia" min="" placeholder="e.g. Caldeira">
+							<label for="freg" style="color: var(--text-color)">Input Freguesia:</label>
+							<input type="text" id="freg" min="" placeholder="e.g. Avenidas Novas">
+							<label for="lon" style="color: var(--text-color)">Input lon:</label>
+							<input type="number" id="lon" min="" placeholder="e.g. -9.586967">
+							<label for="lat" style="color: var(--text-color)">Input lat:</label>
+							<input type="number" id="lat" min="" placeholder="e.g. 38.563768">
+							<button id="createButton" style="position: relative;">Add</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Update Tree-->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="fas fa-pen icon"></i>
+								<span class="text nav-text">Update Tree</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 75px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="name" style="color: var(--text-color)">Update Nome Vulga:</label>
+							<input type="text" id="name" min="" placeholder="e.g. platano">
+							<label for="especie" style="color: var(--text-color)">Update Especie:</label>
+							<input type="text" id="especie" min="" placeholder="e.g. Platanus sp.">
+							<label for="tipologia" style="color: var(--text-color)">Update Tipologia:</label>
+							<input type="text" id="tipologia" min="" placeholder="e.g. Caldeira">
+							<label for="morada'" style="color: var(--text-color)">Update morada':</label>
+							<input type="text" id="morada'" min="" placeholder="e.g. Campo Pequeno">
+							<label for="pap" style="color: var(--text-color)">Update PAP:</label>
+							<input type="number" id="pap" min="0" placeholder="e.g. 15">
+							<label for="manutencao'" style="color: var(--text-color)">Update manutencao':</label>
+							<input type="text" id="manutencao'" min="" placeholder="e.g. JF">
+							<label for="treeid" style="color: var(--text-color)">Input Tree ID:</label>
+							<input type="number" id="treeid" min="1" placeholder="e.g. 10">
+							<button id="updateButton" style="position: relative;">Update</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Delete Tree-->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="fas fa-trash icon"></i>
+								<span class="text nav-text">Delete Tree</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 80px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Input Tree ID:</label>
+							<input type="number" id="nameFilter" min="1" placeholder="e.g. 120">	
+							<button id="filterButton" style="position: relative;">Delete</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Add Maintenance -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bxs-add-to-queue icon"></i>
+								<span class="text nav-text">Add Maintenance</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 25px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Tree ID:</label>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<label for="opcodes" style="color: var(--text-color)">Operation Code:</label>
+							<input type="number" id="opcodes" min="1" max="6" placeholder="e.g. 3">
+							<label for="date" style="color: var(--text-color)">Date:</label>
+							<input type="date" id="date" min="1" max="5" placeholder="e.g. 04-23-2025">
+							<label for="observe" style="color: var(--text-color)">Observation:</label>
+							<input type="text" id="observe" min="" placeholder="e.g. The operation was interrupted by rain">
+							<label for="officer" style="color: var(--text-color)">Officer:</label>
+							<input type="text" id="officer" min="1" max="5" placeholder="e.g. Engr. Afonso">
+							<button id="filterButton" style="position: relative;">Add</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: View Maintenance -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="fa fa-eye icon"></i>
+								<span class="text nav-text">View Maintenance</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 15px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Tree ID:</label>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<label for="limit" style="color: var(--text-color)">Limit:</label>
+							<input type="number" id="limit" min="1" max="6" placeholder="e.g. 10">
+							<button id="filterButton" style="position: relative;">Filter</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Add Comment -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bxs-add-to-queue icon"></i>
+								<span class="text nav-text">Add Comment</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 50px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Tree ID:</label>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<label for="user" style="color: var(--text-color)">Username:</label>
+							<input type="text" id="user" min="1" max="6" placeholder="e.g. john123">
+							<label for="comment" style="color: var(--text-color)">Comment:</label>
+							<input type="text" id="comment" min="" placeholder="e.g. This tree is damaged...">
+							<button id="filterButton" style="position: relative;">Submit</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: View Comment -->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="fa fa-eye icon"></i>
+								<span class="text nav-text">View Comment</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 40px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<label for="idFilter" style="color: var(--text-color)">Tree ID:</label>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<label for="limit" style="color: var(--text-color)">Limit:</label>
+							<input type="number" id="limit" min="1" max="6" placeholder="e.g. 10">
+							<button id="filterButton" style="position: relative;">Filter</button>
+							<div id="results" class="clickable"></div>
+						</div>
+					</div>
+
+					<!-- Section: Contact-->
+					<div class="menu-links">
+						<li class="nav-link">
+							<a href="#">
+								<i class="bx bxs-envelope icon"></i>
+								<span class="text nav-text">Contact</span>
+								<i class="bx bx-chevron-down arrow" style ="margin-left: 110px;"></i>
+							</a>
+						</li>
+						<div class="sub-menu">
+							<li>
+								<div class="contactIcons">
+									<a href="https://github.com/OceeDiTT" target="_blank"><i class="fab fa-github"></i></a>
+									<a href="www.linkedin.com/in/oluomachristian" target="_blank"><i class="fab fa-linkedin"></i></a>
+									<a href="mailto:20250854@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
+								</div>
+								<a><span id="Chris">Christian Chibuike Oluoma</span></a>
+								
+							</li>
+							<li>
+								<div class="contactIcons">
+									<a href="https://github.com/adebolaadedayo" target="_blank"><i class="fab fa-github"></i></a>
+									<a href="https://www.linkedin.com/in/adebola-adedayo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+									<a href="mailto:20250853@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
+								</div>
+								<a><span id="Adebola">Adebola David Adedayo</span></a>
+							
+							</li>
+							<li>
+								<div class="contactIcons">
+									<a href="https://github.com/saba-fatima-eng" target="_blank"><i class="fab fa-github"></i></a>
+									<a href="https://www.linkedin.com/in/saba-fatima1101/" target="_blank"><i class="fab fa-linkedin"></i></a>
+									<a href="mailto:20250858@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
+								</div>
+								<a><span>Saba Fatima</span></a>
+							
+							</li>
+					</div>
+
+					<!-- Dark/Light Mode-->
+					<div class="dark">
+						<li class="mode">
+							<div class="moon-sun">
+								<i class="bx bx-moon icon moon"></i>
+								<i class="bx bx-sun icon sun"></i>
+							</div>	
+							<span class="mode-text text">Dark Mode</span>
+							<div class="toggle-switch">
+								<span class="switch"></span>
+							</div>	
+						</li>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Leafletmap container -->
+		<div id="leaflet"></div>
+
+		<!-- Javascript files -->
+		<script src="https://unpkg.com/leaflet/dist/leaflet-src.js"></script>
+		<script src="script.js"></script>
+	</body>
+</html>
