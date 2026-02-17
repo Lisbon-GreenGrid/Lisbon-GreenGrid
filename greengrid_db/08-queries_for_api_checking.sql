@@ -12,7 +12,7 @@ ORDER BY created_at DESC
 LIMIT 4;
 
 -- 4. GET MAINTENANCE HISTORY BY TREE ID (with limit)
-SELECT m.maint_date, o.op_description, t.manutencao AS maintenance_authority
+SELECT m.maint_date, o.op_description, m.observation, m.officer,t.manutencao AS maintenance_authority
 FROM pa.maintenance m
 JOIN pa.operations o ON m.op_code = o.op_code
 JOIN pa.trees t ON m.tree_id = t.tree_id
@@ -29,7 +29,8 @@ SET nome_vulga = 'Oliveira Monumental',
     especie = 'Olea europaea', 
     tipologia = 'Arvores de Interesse Público', 
     morada = 'Jardim da Estrela', 
-    pap = 45.5 
+    pap = 45.5,
+    manutencao = 'CML' 
 WHERE tree_id = 1;
 
 -- 7. ADD A NEW COMMENT
@@ -37,8 +38,8 @@ INSERT INTO pa.comments (username, tree_id, comment)
 VALUES ('nature_fan', 1, 'The shade under this olive tree is perfect for studying!');
 
 -- 8. ADD NEW MAINTENANCE STATUS
-INSERT INTO pa.maintenance (tree_id, op_code, maint_date) 
-VALUES (8, 4, '2026-02-13');
+INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) 
+VALUES (8, 4, 'Visual Inspection', 'Shawn Murfy', '2026-02-13');
 
 -- 9. GET TREES WITHIN A FREGUESIA
 SELECT *, ST_AsGeoJSON(geometry) as geometry FROM pa.trees WHERE freguesia ILIKE '%Ajuda%';

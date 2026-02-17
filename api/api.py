@@ -23,7 +23,7 @@ def get_db_connection():
 def get_all_trees():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT *, ST_AsGeoJSON(geom) as geometry FROM pa.trees")
+    cur.execute("SELECT *, ST_AsGeoJSON(geometry) as geometry FROM pa.trees")
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -35,7 +35,7 @@ def get_tree_details(id):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT *, ST_AsGeoJSON(geom) as geometry 
+        SELECT *, ST_AsGeoJSON(geometry) as geometry 
         FROM pa.trees 
         WHERE tree_id = %s
     """, (id,))
@@ -72,7 +72,7 @@ def get_maintenance_history(id):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT m.maint_date, o.op_description, t.manutencao AS maintenance_authority
+        SELECT m.maint_date, o.op_description, m.observation, m.officer, t.manutencao AS maintenance_authority
         FROM pa.maintenance m
         JOIN pa.operations o ON m.op_code = o.op_code
         JOIN pa.trees t ON m.tree_id = t.tree_id
@@ -150,13 +150,18 @@ def add_maintenance(id):
     data = request.json
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO pa.maintenance (tree_id, op_code, maint_date) 
-        VALUES (%s, %s, %s)
-    """, (id, data['op_code'], data['maint_date']))
-    conn.commit()
-    cur.close()
-    conn.close()
+    try:
+        cur.execute("""
+            INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (id, data['op_code'], data.get('observation', ''), data.get('officer', ''), data['maint_date']))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
     return jsonify({"message": "Maintenance record added"})
 
 # 9. GET TREES WITHIN A FREGUESIA
@@ -164,7 +169,7 @@ def add_maintenance(id):
 def get_trees_by_freguesia(name):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT *, ST_AsGeoJSON(geom) as geometry FROM pa.trees WHERE freguesia ILIKE %s", (f"%{name}%",))
+    cur.execute("SELECT *, ST_AsGeoJSON(geometry) as geometry FROM pa.trees WHERE freguesia ILIKE %s", (f"%{name}%",))
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -175,7 +180,7 @@ def get_trees_by_freguesia(name):
 def get_trees_by_species(species):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT *, ST_AsGeoJSON(geom) as geometry FROM pa.trees WHERE especie ILIKE %s", (f"%{species}%",))
+    cur.execute("SELECT *, ST_AsGeoJSON(geometry) as geometry FROM pa.trees WHERE especie ILIKE %s", (f"%{species}%",))
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -192,9 +197,9 @@ def get_trees_near():
     cur = conn.cursor()
     # Use ST_DWithin with geography for meter-based radius
     cur.execute("""
-        SELECT *, ST_AsGeoJSON(geom) as geometry 
+        SELECT *, ST_AsGeoJSON(geometry) as geometry 
         FROM pa.trees 
-        WHERE ST_DWithin(geom::geography, ST_MakePoint(%s, %s)::geography, %s)
+        WHERE ST_DWithin(geometry::geography, ST_MakePoint(%s, %s)::geography, %s)
     """, (lon, lat, radius))
     rows = cur.fetchall()
     cur.close()
@@ -208,7 +213,7 @@ def create_tree():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, freguesia, geom)
+        INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, freguesia, geometry)
         VALUES (%s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
     """, (data['tree_id'], data['nome_vulga'], data['especie'], data['tipologia'], 
           data['freguesia'], data['lon'], data['lat']))

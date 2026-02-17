@@ -1,3 +1,4 @@
 etl/data/processed
 *__pycache__*
 api/key.py
+.vscode/

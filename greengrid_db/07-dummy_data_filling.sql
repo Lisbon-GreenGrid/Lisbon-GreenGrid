@@ -36,18 +36,18 @@ INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, pap, manutencao, 
 (10, 'Sobreiro Jovem', 'Quercus suber', 'Sapling', 15.0, 'Frequent', 'Public', 'Belém Riverside', 'Av. Brasília', 'Belém', ST_SetSRID(ST_MakePoint(-9.2000, 38.6960), 4326));
 
 -- 6. FILL pa.maintenance (Linking Trees to Operations)
-INSERT INTO pa.maintenance (tree_id, op_code, maint_date) VALUES
-(1, 4, '2026-01-10'), -- Tree 1: Visual Inspection
-(1, 1, '2026-02-05'), -- Tree 1: Pruning
-(1, 2, '2026-01-20'), -- Tree 1: Pest Control
-(1, 4, '2026-02-11'), -- Tree 1: Visual Inspection
-(1, 6, '2024-11-15'), -- Tree 1: Planting
-(1, 3, '2026-02-12'); -- Tree 1: Fertilization
-(2, 3, '2025-12-01'), -- Tree 2: Fertilization
-(3, 2, '2026-01-20'), -- Tree 3: Pest Control
-(5, 4, '2026-02-11'), -- Tree 5: Visual Inspection
-(8, 6, '2024-11-15'), -- Tree 8: Planting
-(10, 3, '2026-02-12'); -- Tree 10: Fertilization
+INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) VALUES
+(1, 4, 'Routine check, tree appears healthy.', 'Inspector John', '2026-01-10'), -- Tree 1: Visual Inspection
+(1, 1, 'Crown thinning performed.', 'Arbor Team A', '2026-02-05'), -- Tree 1: Pruning
+(1, 2, 'Applied eco-friendly pesticide.', 'Pest Control Div', '2026-01-20'), -- Tree 1: Pest Control
+(1, 4, 'Post-treatment follow-up.', 'Inspector John', '2026-02-11'), -- Tree 1: Visual Inspection
+(1, 6, 'Initial planting in urban zone.', 'Green Lisbon Team', '2024-11-15'), -- Tree 1: Planting
+(1, 3, 'High-nitrogen fertilizer applied.', 'Maintenance Crew', '2026-02-12'); -- Tree 1: Fertilization
+(2, 3, 'Winter fertilization cycle.', 'Maintenance Crew', '2025-12-01'), -- Tree 2: Fertilization
+(3, 2, 'Aphid infestation treated.', 'Pest Control Div', '2026-01-20'), -- Tree 3: Pest Control
+(5, 4, 'No issues found.', 'Inspector Mary', '2026-02-11'), -- Tree 5: Visual Inspection
+(8, 6, 'Replacement tree planted.', 'Green Lisbon Team', '2024-11-15'), -- Tree 8: Planting
+(10, 3, 'Soil nutrients replenished.', 'Maintenance Crew', '2026-02-12'); -- Tree 10: Fertilization
 
 -- 7. FILL pa.comments (Linking Users to Trees)
 INSERT INTO pa.comments (username, tree_id, comment, created_at) VALUES
