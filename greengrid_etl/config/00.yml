@@ -17,4 +17,4 @@ columns:
 - local
 - morada
 - freguesia
-- geom
+- geometry
