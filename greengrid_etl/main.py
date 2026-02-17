@@ -74,10 +74,10 @@ def transformation(config: dict) -> None:
         "cod_sig_new" : "tree_id",
         "especie_va" : "especie",
         "freg_2012" : "freguesia",
-        "geometry" : "geom"
+        "geometry" : "geometry"
         }
     )
-    gdf.set_geometry("geom", inplace=True)
+    gdf.set_geometry("geometry", inplace=True)
 
     cols = config["columns"]
     gdf = gdf[cols]
