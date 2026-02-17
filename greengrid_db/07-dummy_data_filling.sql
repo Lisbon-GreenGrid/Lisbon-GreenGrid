@@ -42,7 +42,7 @@ INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) 
 (1, 2, 'Applied eco-friendly pesticide.', 'Pest Control Div', '2026-01-20'), -- Tree 1: Pest Control
 (1, 4, 'Post-treatment follow-up.', 'Inspector John', '2026-02-11'), -- Tree 1: Visual Inspection
 (1, 6, 'Initial planting in urban zone.', 'Green Lisbon Team', '2024-11-15'), -- Tree 1: Planting
-(1, 3, 'High-nitrogen fertilizer applied.', 'Maintenance Crew', '2026-02-12'); -- Tree 1: Fertilization
+(1, 3, 'High-nitrogen fertilizer applied.', 'Maintenance Crew', '2026-02-12'), -- Tree 1: Fertilization
 (2, 3, 'Winter fertilization cycle.', 'Maintenance Crew', '2025-12-01'), -- Tree 2: Fertilization
 (3, 2, 'Aphid infestation treated.', 'Pest Control Div', '2026-01-20'), -- Tree 3: Pest Control
 (5, 4, 'No issues found.', 'Inspector Mary', '2026-02-11'), -- Tree 5: Visual Inspection
