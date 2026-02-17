@@ -2,7 +2,7 @@ This documentation provides a comprehensive overview of the Lisbon GreenGrid API
 
 
 
-# Technical Architecture
+## Technical Architecture
 
 The system utilizes a Python-based Flask framework to interface with a PostgreSQL database. Spatial capabilities are provided by the PostGIS extension, allowing for geographic coordinate storage and proximity-based queries using the ETRS89 / Portugal TM06 (interpreted here as WGS 84, EPSG:4326) coordinate system.
 
@@ -14,7 +14,7 @@ Tech Stack:
 
 
 
-# Installation and Deployment
+## Installation and Deployment
 
 1. Database Initialization
 
@@ -50,9 +50,9 @@ The service defaults to `http://127.0.0.1:5000`.
 
 
 
-# API Reference
+## API Reference
 
-# Tree Management
+## Tree Management
 
 | Method | Endpoint | Description |
 | GET | `/trees` | Returns a collection of all trees with GeoJSON geometry. |
@@ -61,14 +61,14 @@ The service defaults to `http://127.0.0.1:5000`.
 | PUT | `/tree/<id>` | Updates non-spatial attributes of an existing tree. |
 | DELETE | `/tree/<id>` | Permanently removes a tree record and associated maintenance logs. |
 
-# Maintenance and Operations
+## Maintenance and Operations
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | GET | `/tree/<id>/maintenance` | Retrieves the maintenance history, including officer and observations. |
 | POST | `/tree/<id>/maintenance` | Records a new maintenance event (linked to op_code). |
 
-# Spatial and Filter Queries
+## Spatial and Filter Queries
 
 | Method | Endpoint | Description |
 | GET | `/trees/near` | Proximity search. Params: `lat`, `lon`, `radius` (in meters). |
@@ -77,7 +77,7 @@ The service defaults to `http://127.0.0.1:5000`.
 
 
 
-# Testing Protocol (Postman)
+## Testing Protocol (Postman)
 
 To ensure consistent testing across development environments, use the following configuration:
 
@@ -88,7 +88,7 @@ To ensure consistent testing across development environments, use the following 
 
 
 
-# Directory Structure
+## Directory Structure
 
 * /api: Contains `api.py` (application entry point).
 * /greengrid_db: SQL scripts for schema management and data persistence.
