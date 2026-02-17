@@ -41,7 +41,7 @@
 					<!-- Search box -->
 					<li class="search-box">
 							<i class="bx bx-search icon"></i>
-							<input type="search" id="searchInput" style="font-size: 22px" placeholder="Search...">
+							<input type="search" id="searchInput" style="position: relative; font-size: 22px" placeholder="Search...">
 					</li>
 					
 					<!-- Section: Filter by-->
@@ -85,8 +85,8 @@
 						</li>
 						<div class="sub-menu">
 							<label for="idFilter" style="color: var(--text-color)">Input Tree ID:</label>
-							<input type="number" id="nameFilter" min="1" placeholder="e.g. 120">	
-							<button id="filterButton" style="position: relative;">Find</button>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<button id="findTreeButton" style="position: relative;">Find</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -109,7 +109,7 @@
 							<input type="number" id="radiusFilter" min="1" placeholder="e.g. 100">
 							<label for="specieFilter" style="color: var(--text-color)">Especie:</label>
 							<input type="text" id="specieFilter" min="" placeholder="e.g. Platanus sp.">
-							<button id="filterButton" style="position: relative;">Find</button>
+							<button id="nearTreeButton" style="position: relative;">Find</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -138,7 +138,7 @@
 							<input type="number" id="lon" min="" placeholder="e.g. -9.586967">
 							<label for="lat" style="color: var(--text-color)">Input lat:</label>
 							<input type="number" id="lat" min="" placeholder="e.g. 38.563768">
-							<button id="createButton" style="position: relative;">Add</button>
+							<button id="createButton" style="position: relative;">Add Tree</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -159,15 +159,15 @@
 							<input type="text" id="especie" min="" placeholder="e.g. Platanus sp.">
 							<label for="tipologia" style="color: var(--text-color)">Update Tipologia:</label>
 							<input type="text" id="tipologia" min="" placeholder="e.g. Caldeira">
-							<label for="morada'" style="color: var(--text-color)">Update morada':</label>
-							<input type="text" id="morada'" min="" placeholder="e.g. Campo Pequeno">
+							<label for="morada" style="color: var(--text-color)">Update morada':</label>
+							<input type="text" id="morada" min="" placeholder="e.g. Campo Pequeno">
 							<label for="pap" style="color: var(--text-color)">Update PAP:</label>
 							<input type="number" id="pap" min="0" placeholder="e.g. 15">
-							<label for="manutencao'" style="color: var(--text-color)">Update manutencao':</label>
-							<input type="text" id="manutencao'" min="" placeholder="e.g. JF">
+							<label for="manutencao" style="color: var(--text-color)">Update manutencao':</label>
+							<input type="text" id="manutencao" min="" placeholder="e.g. JF">
 							<label for="treeid" style="color: var(--text-color)">Input Tree ID:</label>
 							<input type="number" id="treeid" min="1" placeholder="e.g. 10">
-							<button id="updateButton" style="position: relative;">Update</button>
+							<button id="updateTreeButton" style="position: relative;">Update</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -183,8 +183,8 @@
 						</li>
 						<div class="sub-menu">
 							<label for="idFilter" style="color: var(--text-color)">Input Tree ID:</label>
-							<input type="number" id="nameFilter" min="1" placeholder="e.g. 120">	
-							<button id="filterButton" style="position: relative;">Delete</button>
+							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
+							<button id="deleteTreeButton" style="position: relative;">Delete</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -209,7 +209,7 @@
 							<input type="text" id="observe" min="" placeholder="e.g. The operation was interrupted by rain">
 							<label for="officer" style="color: var(--text-color)">Officer:</label>
 							<input type="text" id="officer" min="1" max="5" placeholder="e.g. Engr. Afonso">
-							<button id="filterButton" style="position: relative;">Add</button>
+							<button id="addMaintButton" style="position: relative;">Add Maintenance</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -228,7 +228,7 @@
 							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
 							<label for="limit" style="color: var(--text-color)">Limit:</label>
 							<input type="number" id="limit" min="1" max="6" placeholder="e.g. 10">
-							<button id="filterButton" style="position: relative;">Filter</button>
+							<button id="viewMaintButton" style="position: relative;">Filter</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -249,7 +249,7 @@
 							<input type="text" id="user" min="1" max="6" placeholder="e.g. john123">
 							<label for="comment" style="color: var(--text-color)">Comment:</label>
 							<input type="text" id="comment" min="" placeholder="e.g. This tree is damaged...">
-							<button id="filterButton" style="position: relative;">Submit</button>
+							<button id="addCommentButton" style="position: relative;">Submit</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -268,7 +268,7 @@
 							<input type="number" id="idFilter" min="1" placeholder="e.g. 120">	
 							<label for="limit" style="color: var(--text-color)">Limit:</label>
 							<input type="number" id="limit" min="1" max="6" placeholder="e.g. 10">
-							<button id="filterButton" style="position: relative;">Filter</button>
+							<button id="viewCommentButton" style="position: relative;">Filter</button>
 							<div id="results" class="clickable"></div>
 						</div>
 					</div>
@@ -285,21 +285,21 @@
 						<div class="sub-menu">
 							<li>
 								<div class="contactIcons">
-									<a href="https://github.com/OceeDiTT" target="_blank"><i class="fab fa-github"></i></a>
-									<a href="www.linkedin.com/in/oluomachristian" target="_blank"><i class="fab fa-linkedin"></i></a>
-									<a href="mailto:20250854@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
-								</div>
-								<a><span id="Chris">Christian Chibuike Oluoma</span></a>
-								
-							</li>
-							<li>
-								<div class="contactIcons">
 									<a href="https://github.com/adebolaadedayo" target="_blank"><i class="fab fa-github"></i></a>
 									<a href="https://www.linkedin.com/in/adebola-adedayo/" target="_blank"><i class="fab fa-linkedin"></i></a>
 									<a href="mailto:20250853@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
 								</div>
 								<a><span id="Adebola">Adebola David Adedayo</span></a>
 							
+							</li>
+							<li>
+								<div class="contactIcons">
+									<a href="https://github.com/OceeDiTT" target="_blank"><i class="fab fa-github"></i></a>
+									<a href="www.linkedin.com/in/oluomachristian" target="_blank"><i class="fab fa-linkedin"></i></a>
+									<a href="mailto:20250854@novaims.unl.pt"><i class="fas fa-envelope"></i></a>
+								</div>
+								<a><span id="Chris">Christian Chibuike Oluoma</span></a>
+								
 							</li>
 							<li>
 								<div class="contactIcons">
