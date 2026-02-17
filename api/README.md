@@ -26,14 +26,14 @@ Execute the SQL scripts located in the `/greengrid_db` directory in the followin
 
 2. Environment Configuration
 
-It is recommended to use the existing virtual environment:
-
 ```bash
 # Windows
-greengridApiEnv\Scripts\activate
+conda create -n greengrid_api_venv
+
+conda activate greengrid_api_venv
 
 # Dependencies
-pip install -r requirements.txt
+conda install --file requirements.txt
 
 ```
 
