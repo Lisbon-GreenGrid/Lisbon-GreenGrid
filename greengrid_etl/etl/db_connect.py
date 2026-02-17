@@ -43,9 +43,10 @@ class DBController:
             engine = sql.create_engine(self.uri)
             with engine.connect() as con:
                 tran = con.begin()
+                con.execute(sql.text(f"TRUNCATE TABLE {schema}.{table} CASCADE;")) # Clears table without dropping it. Keeps the trigger alive
                 gdf.to_postgis(
                     name=table, schema=schema,
-                    con=con, if_exists="replace", index=False,
+                    con=con, if_exists="append", index=False,
                     chunksize=chunksize
                 )
                 tran.commit()
