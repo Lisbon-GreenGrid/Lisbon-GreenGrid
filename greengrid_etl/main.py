@@ -12,7 +12,7 @@ TABLE = "trees"
 DOWNLOAD_DIR = "data/original"
 PROCESSED_DIR = "data/processed"
 STATIC_DIR = "data/static"
-TARGET_SRID = "4326"
+TARGET_SRID = 4326
 
 def extraction(config: dict) -> None:
     """ Runs extraction
