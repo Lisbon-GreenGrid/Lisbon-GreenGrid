@@ -1,17 +1,87 @@
-
 const API_BASE_URL = "http://localhost:5000";
 
-// --- 1. MAP INITIALIZATION ---
-var map = new L.Map('leaflet', {
-    layers: [
-        new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        })
-    ],
-    center: [38.7223, -9.1393], 
-    zoom: 13
+// --- 1. MAP & BASEMAP INITIALIZATION ---
+
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
 });
+
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+
+const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20
+});
+
+// Initialize the map
+var map = new L.Map('leaflet', {
+    center: [38.7448, -9.1607], // Lisbon coordinates
+    zoom: 12.5,
+    layers: [osm] // Default base layer
+});
+
 map.zoomControl.setPosition("bottomright");
+
+// --- 1.2. LAYER MANAGEMENT ---
+
+// Create the group for tree markers and add it to the map by default
+const treeLayer = L.layerGroup().addTo(map);
+// Define the Base Maps
+const baseMaps = {
+    "Standard": osm,
+    "Satellite": satellite,
+    "Dark Mode": darkMap
+};
+// Define the Overlays (The Trees)
+const AllTrees = {
+    "Tree Inventory": treeLayer
+};
+// One single control for both base maps and overlays
+L.control.layers(baseMaps, AllTrees).addTo(map);
+
+// --- 1.3. All Trees LOADING ---
+
+function loadAllTrees() {
+    fetch(`${API_BASE_URL}/trees`)
+        .then(response => response.json())
+        .then(data => {
+            treeLayer.clearLayers();
+
+            data.forEach(tree => {
+                // Parse geometry
+                const geom = JSON.parse(tree.geometry);
+                const lat = geom.coordinates[1];
+                const lon = geom.coordinates[0];
+
+                const marker = L.circleMarker([lat, lon], {
+                    radius: 6,
+                    fillColor: "#2d5a27",
+                    color: "#ffffff",
+                    weight: 1,
+                    fillOpacity: 0.9
+                });
+
+                marker.bindPopup(`
+                    <div style="font-family: sans-serif;">
+                        <h4 style="margin:0; color:#2d5a27;">${tree.nome_vulga}</h4>
+                        <hr>
+                        <b>ID:</b> ${tree.tree_id}<br>
+                        <b>Species:</b> <i>${tree.especie}</i><br>
+                        <b>Authority:</b> ${tree.manutencao}
+                    </div>
+                `);
+
+                marker.addTo(treeLayer);
+            });
+        })
+        .catch(err => console.error("Error loading trees:", err));
+}
+
+loadAllTrees();
+
 
 // --- 2. SIDEBAR & UI LOGIC ---
 const body = document.querySelector("body"),
@@ -41,190 +111,60 @@ document.querySelectorAll(".nav-link").forEach(link => {
     };
 });
 
-// --- 3. CORE DATA LOADING ---
-function loadAllTrees() {
-    fetch(`${API_BASE_URL}/trees`)
-        .then(res => res.json())
-        .then(trees => {
-            trees.forEach(tree => {
-                const geom = JSON.parse(tree.geometry);
-                const marker = L.circleMarker([geom.coordinates[1], geom.coordinates[0]], {
-                    radius: 7, fillColor: "#2d5a27", color: "#fff", weight: 2, fillOpacity: 0.8
-                }).addTo(map);
-                marker.bindPopup(`<b>${tree.nome_vulga}</b><br>ID: ${tree.tree_id}<br>${tree.especie}`);
-            });
-        });
-}
-loadAllTrees();
 
-// Helper for API Actions
-async function apiAction(url, method, payload = null) {
-    const options = {
-        method,
-        headers: { 'Content-Type': 'application/json' }
-    };
-    if (payload) options.body = JSON.stringify(payload);
-    
-    try {
-        const res = await fetch(url, options);
-        const data = await res.json();
-        alert(data.message || data.error || "Operation Successful");
-        if (method !== 'GET') location.reload();
-    } catch (e) {
-        alert("Error: Could not connect to the API.");
-    }
-}
+// --- 3. SECTION HANDLERS ---
+// --- FIND TREE BY ID LOGIC ---
 
-// --- 4. SEARCH DROPDOWN FIX ---
-searchInput.addEventListener("input", function () {
-    const query = searchInput.value.trim();
-    let existingResults = document.getElementById("searchResultsDropdown");
-    if (existingResults) existingResults.remove();
-    
-    if (query.length < 2) return;
-
-    fetch(`${API_BASE_URL}/trees/species/${encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(data => {
-            const resultsDiv = document.createElement("div");
-            resultsDiv.id = "searchResultsDropdown";
-            
-            data.forEach(tree => {
-                const item = document.createElement("div");
-                item.style.padding = "10px";
-                item.style.cursor = "pointer";
-                item.innerHTML = `<b>${tree.nome_vulga}</b> <small>(${tree.tree_id})</small>`;
-
-                item.addEventListener("click", () => {
-                    const geom = JSON.parse(tree.geometry);
-                    map.setView([geom.coordinates[1], geom.coordinates[0]], 19);
-                    resultsDiv.remove();
-                    searchInput.value = tree.nome_vulga;
-                });
-                resultsDiv.appendChild(item);
-            });
-            document.querySelector(".search-box").appendChild(resultsDiv);
-        });
-});
-
-// Close search dropdown if user clicks on map
-map.on('click', () => {
-    let drop = document.getElementById("searchResultsDropdown");
-    if (drop) drop.remove();
-});
-
-// --- 5. SECTION HANDLERS ---
-
-// FIND TREE BY ID
 document.getElementById('findTreeButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    if(!id) return alert("Enter an ID");
-    fetch(`${API_BASE_URL}/tree/${id}`).then(res => res.json()).then(tree => {
-        if (tree.error) return alert("Tree not found");
-        const geom = JSON.parse(tree.geometry);
-        map.setView([geom.coordinates[1], geom.coordinates[0]], 19);
-    });
-};
+    const treeId = document.getElementById('idFilter').value;
 
-// NEAREST TREE SEARCH
-document.getElementById('nearTreeButton').onclick = function() {
-    const lat = document.getElementById('latFilter').value;
-    const lon = document.getElementById('lonFilter').value;
-    const rad = document.getElementById('radiusFilter').value;
-    if(!lat || !lon || !rad) return alert("Fill all fields");
-    
-    fetch(`${API_BASE_URL}/trees/near?lat=${lat}&lon=${lon}&radius=${rad}`)
-        .then(res => res.json())
-        .then(data => {
-            L.circle([lat, lon], {radius: rad, color: 'var(--accent-colour)', fillOpacity: 0.1}).addTo(map);
-            alert(`Found ${data.length} trees nearby.`);
-        });
-};
-
-// CREATE TREE (Section 5)
-document.getElementById('createButton').onclick = function() {
-    const payload = {
-        tree_id: document.getElementById('treeid').value,
-        nome_vulga: document.getElementById('name').value,
-        especie: document.getElementById('especie').value,
-        tipologia: document.getElementById('tipologia').value,
-        freguesia: document.getElementById('freg').value,
-        lat: parseFloat(document.getElementById('lat').value),
-        lon: parseFloat(document.getElementById('lon').value)
-    };
-    apiAction(`${API_BASE_URL}/tree`, 'POST', payload);
-};
-
-// UPDATE TREE (Section 6 - Uses Scope-Based Targeting)
-document.getElementById('updateTreeButton').onclick = function() {
-    const section = this.parentElement;
-    const id = section.querySelector('#treeid').value;
-    const payload = {
-        nome_vulga: section.querySelector('#name').value,
-        especie: section.querySelector('#especie').value,
-        tipologia: section.querySelector('#tipologia').value,
-        morada: section.querySelector('#morada').value,
-        pap: section.querySelector('#pap').value,
-        manutencao: section.querySelector('#manutencao').value
-    };
-    apiAction(`${API_BASE_URL}/tree/${id}`, 'PUT', payload);
-};
-
-// DELETE TREE
-document.getElementById('deleteTreeButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    if(confirm(`Confirm deletion of tree ${id}?`)) {
-        apiAction(`${API_BASE_URL}/tree/${id}`, 'DELETE');
+    if (!treeId) {
+        alert("Please enter a Tree ID");
+        return;
     }
-};
 
-// ADD MAINTENANCE
-document.getElementById('addMaintButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    const payload = {
-        op_code: document.getElementById('opcodes').value,
-        officer: document.getElementById('officer').value,
-        maint_date: document.getElementById('date').value,
-        observation: document.getElementById('observe').value
-    };
-    apiAction(`${API_BASE_URL}/tree/${id}/maintenance`, 'POST', payload);
-};
+    fetch(`${API_BASE_URL}/tree/${treeId}`)
+        .then(response => response.json())
+        .then(tree => {
+            if (tree.error) {
+                alert("Tree not found!");
+                return;
+            }
 
-// VIEW MAINTENANCE
-document.getElementById('viewMaintButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    const limit = document.getElementById('limit').value || 10;
-    const resultsArea = this.parentElement.querySelector('#results');
-    
-    fetch(`${API_BASE_URL}/tree/${id}/maintenance?limit=${limit}`)
-        .then(res => res.json())
-        .then(data => {
-            resultsArea.innerHTML = data.length > 0 
-                ? data.map(log => `<div class="comments"><b>${log.maint_date}</b>: ${log.op_description} (${log.officer})</div>`).join("")
-                : "No logs found.";
-        });
-};
+            // --- Clear all other trees from the map ---
+            treeLayer.clearLayers(); 
 
-// ADD COMMENT
-document.getElementById('addCommentButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    const payload = {
-        username: document.getElementById('user').value,
-        comment_text: document.getElementById('comment').value
-    };
-    apiAction(`${API_BASE_URL}/tree/${id}/comment`, 'POST', payload);
-};
+            const geom = JSON.parse(tree.geometry);
+            const lat = geom.coordinates[1];
+            const lon = geom.coordinates[0];
 
-// VIEW COMMENTS
-document.getElementById('viewCommentButton').onclick = function() {
-    const id = this.parentElement.querySelector('#idFilter').value;
-    const resultsArea = this.parentElement.querySelector('#results');
-    
-    fetch(`${API_BASE_URL}/tree/${id}/comments`)
-        .then(res => res.json())
-        .then(data => {
-            resultsArea.innerHTML = data.length > 0 
-                ? data.map(c => `<div class="comments"><b>${c.username}</b>: ${c.comment_text}</div>`).join("")
-                : "No comments found.";
+            // Create the single marker for the searched tree
+            const marker = L.circleMarker([lat, lon], {
+                radius: 8, // Slightly larger to make it stand out
+                fillColor: "#e74c3c", // Red color to distinguish it from the green grid
+                color: "#ffffff",
+                weight: 2,
+                fillOpacity: 1
+            });
+
+            // Add the single marker back to the layer so it stays toggleable
+            marker.addTo(treeLayer);
+
+            map.flyTo([lat, lon], 17, {
+                animate: true,
+                duration: 1.5
+            });
+
+            marker.bindPopup(`
+                <div style="font-family: sans-serif; min-width: 180px;">
+                    <h4 style="margin:0; color:#e74c3c;">Tree Found (ID: ${tree.tree_id})</h4>
+                    <hr>
+                    <b>Common Name:</b> ${tree.nome_vulga || 'N/A'}<br>
+                    <b>Species:</b> <i>${tree.especie || 'N/A'}</i>
+                </div>
+            `).openPopup();
+        })
+        .catch(err => {
+            console.error("Error finding tree:", err);
         });
 };

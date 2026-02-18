@@ -56,6 +56,7 @@ button{
 }
 button:hover{
     background-color: #1e3d1a; /* Darker green on hover */
+    color: white !important; /* Ensure text is white on hover */
     transform: translateY(-2px); /* Makes button "pop" up slightly */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -351,7 +352,7 @@ body.dark .switch::before{
     position: absolute;
     top: 100%;
     left: 0;
-    width: 95%;
+    width: 100%;
     z-index: 2000;
     background-color: var(--sidebar-color) !important;
     color: var(--text-color) !important;
