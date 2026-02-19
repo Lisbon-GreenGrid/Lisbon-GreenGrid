@@ -388,7 +388,7 @@ document.getElementById('createTreeButton').onclick = async function() {
             // 5. Center map on the new tree
             map.flyTo([payload.lat, payload.lon], 17);
 
-            // Optional: Clear form fields after success
+            // Clear form fields after success
             document.querySelectorAll('.sub-menu input').forEach(input => input.value = '');
         } else {
             alert("Error: " + (result.error || "Failed to create tree."));
@@ -486,7 +486,7 @@ document.getElementById('deleteTreeButton').onclick = async function() {
     }
 
     // 2. Confirmation Dialog to prevent accidental deletions
-    const confirmDelete = confirm(`Are you sure you want to permanently delete Tree #${treeId}? This action cannot be undone.`);
+    const confirmDelete = confirm(`Are you sure you want to permanently delete Tree ${treeId}? This action cannot be undone.`);
     
     if (!confirmDelete) return;
 
@@ -518,3 +518,279 @@ document.getElementById('deleteTreeButton').onclick = async function() {
         alert("Could not connect to the server.");
     }
 };
+
+// -- 3.7. ADD MAINTENANCE RECORD LOGIC ---
+document.getElementById('addMaintButton').onclick = async function() {
+    // 1. Scope to the specific "Add Maintenance" sub-menu
+    const container = this.closest('.sub-menu');
+
+    // 2. Gather values from the inputs
+    const treeId = container.querySelector('#idFilter').value;
+    const payload = {
+        op_code: container.querySelector('#opcodes').value,
+        maint_date: container.querySelector('#date').value,
+        observation: container.querySelector('#observe').value,
+        officer: container.querySelector('#officer').value
+    };
+
+    // 3. Basic Validation
+    if (!treeId || !payload.op_code || !payload.maint_date) {
+        alert("Please provide the Tree ID, Operation Code, and Date.");
+        return;
+    }
+
+    try {
+        // 4. Send POST request to the maintenance endpoint
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}/maintenance`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            
+            // 5. Visual Feedback: Find the tree on the map to show where you added the log
+            const detailRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
+            const tree = await detailRes.json();
+            
+            if (!tree.error) {
+                const geom = JSON.parse(tree.geometry);
+                const lat = geom.coordinates[1];
+                const lon = geom.coordinates[0];
+
+                // Fly to the tree and open a popup confirming the maintenance
+                map.flyTo([lat, lon], 18);
+                L.popup()
+                    .setLatLng([lat, lon])
+                    .setContent(`
+                        <div style="font-family: sans-serif;">
+                            <h4 style="margin:0; color:#2980b9;">Maintenance Logged</h4>
+                            <hr>
+                            <b>Tree ID:</b> ${treeId}<br>
+                            <b>Op Code:</b> ${payload.op_code}<br>
+                            <b>Officer:</b> ${payload.officer}
+                        </div>
+                    `)
+                    .openOn(map);
+            }
+
+            // 6. Clear the form
+            container.querySelectorAll('input').forEach(input => input.value = '');
+        } else {
+            alert("Error: " + (result.error || "Failed to add maintenance record."));
+        }
+    } catch (error) {
+        console.error("Maintenance Error:", error);
+        alert("Could not connect to the server.");
+    }
+};
+
+// -- 3.8. VIEW MAINTENANCE LOGIC --
+document.getElementById('viewMaintButton').onclick = async function() {
+    const container = this.closest('.sub-menu');
+    const treeId = container.querySelector('#idFilter').value;
+    const limit = container.querySelector('#limit').value || 5;
+
+    if (!treeId) {
+        alert("Please enter a Tree ID to view history.");
+        return;
+    }
+
+    try {
+        // 1. Fetch maintenance history
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}/maintenance?limit=${limit}`);
+        const history = await response.json();
+
+        // 2. Fetch tree location for zooming
+        const treeRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
+        const treeData = await treeRes.json();
+
+        if (treeData.error) {
+            alert("Tree not found.");
+            return;
+        }
+
+        // --- CLEAR ALL TREES FROM THE MAP ---
+        treeLayer.clearLayers();
+
+        // 3. Process coordinates and add ONLY this tree back to the map
+        const geom = JSON.parse(treeData.geometry);
+        const lat = geom.coordinates[1];
+        const lon = geom.coordinates[0];
+
+        // Add a highlighted marker for this specific tree
+        const highlightedMarker = L.circleMarker([lat, lon], {
+            radius: 10,
+            fillColor: "#2d5a27",
+            color: "#fff",
+            weight: 2,
+            fillOpacity: 1
+        }).addTo(treeLayer);
+
+        // highlightedMarker.bindPopup(`
+        //     <b>Tree ID: ${treeId}</b><br>
+        // `).openPopup();
+
+        // Zoom to the point
+        map.flyTo([lat, lon], 17);
+
+        // 4. Render logs in the bottom-left panel
+        const panel = document.getElementById('maintenanceResultsPanel');
+        const content = document.getElementById('maintContent');
+        
+        panel.style.display = 'block';
+        
+        if (history.length === 0) {
+            content.innerHTML = "<p>No maintenance records found for this tree.</p>";
+        } else {
+            content.innerHTML = history.map(log => `
+                <div class="maint-card">
+                    <small style="color: #27ae60;">${new Date(log.maint_date).toLocaleDateString()}</small><br>
+                    <b>Action:</b> ${log.op_description}<br>
+                    <b>Officer:</b> ${log.officer}<br>
+                    <p style="margin: 5px 0; font-style: italic;">"${log.observation || 'No comments'}"</p>
+                </div>
+            `).join('');
+        }
+
+    } catch (error) {
+        console.error("View Maintenance Error:", error);
+        alert("Could not retrieve history.");
+    }
+};
+
+
+// -- 3.9. ADD COMMENT LOGIC --
+document.getElementById('addCommentButton').onclick = async function() {
+    // 1. Scope to the "Add Comment" sub-menu
+    const container = this.closest('.sub-menu');
+
+    // 2. Gather values from the inputs
+    const treeId = container.querySelector('#idFilter').value;
+    const payload = {
+        username: container.querySelector('#user').value.trim(),
+        comment: container.querySelector('#comment').value.trim()
+    };
+
+    // 3. Validation
+    if (!treeId || !payload.username || !payload.comment) {
+        alert("Please provide a Tree ID, Username, and a Comment.");
+        return;
+    }
+
+    try {
+        // 4. Send POST request to your Flask API
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            
+            // 5. Visual Feedback: Fly to the tree to show where the comment was pinned
+            const detailRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
+            const tree = await detailRes.json();
+            
+            if (!tree.error) {
+                const geom = JSON.parse(tree.geometry);
+                const lat = geom.coordinates[1];
+                const lon = geom.coordinates[0];
+
+                map.flyTo([lat, lon], 18);
+                
+                L.popup()
+                    .setLatLng([lat, lon])
+                    .setContent(`
+                        <div style="font-family: sans-serif; max-width: 200px;">
+                            <h4 style="margin:0; color:#8e44ad;">New Comment Added</h4>
+                            <hr>
+                            <b>User:</b> ${payload.username}<br>
+                            <b>Comment:</b> "${payload.comment}"
+                        </div>
+                    `)
+                    .openOn(map);
+            }
+
+            // 6. Clear form fields
+            container.querySelectorAll('input').forEach(input => input.value = '');
+        } else {
+            alert("Error: " + (result.error || "Failed to submit comment."));
+        }
+    } catch (error) {
+        console.error("Comment Submission Error:", error);
+        alert("Could not connect to the server.");
+    }
+};
+
+// -- 3.10. VIEW COMMENTS LOGIC --
+document.getElementById('viewCommentButton').onclick = async function() {
+    const container = this.closest('.sub-menu');
+    const treeId = container.querySelector('#idFilter').value;
+    const limit = container.querySelector('#limit').value || 10;
+
+    if (!treeId) {
+        alert("Please enter a Tree ID to view comments.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}/comments?limit=${limit}`);
+        const comments = await response.json();
+
+        const treeRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
+        const treeData = await treeRes.json();
+
+        if (treeData.error) {
+            alert("Tree not found.");
+            return;
+        }
+
+        // Clear and Highlight
+        treeLayer.clearLayers();
+        const geom = JSON.parse(treeData.geometry);
+        const latLng = [geom.coordinates[1], geom.coordinates[0]];
+
+        L.circleMarker(latLng, {
+            radius: 10,
+            fillColor: "#9b59b6", 
+            color: "#fff",
+            weight: 2,
+            fillOpacity: 1
+        }).addTo(treeLayer);
+
+        map.flyTo(latLng, 18);
+
+        // Render to the correct panel
+        const panel = document.getElementById('commentResultsPanel');
+        const content = document.getElementById('commentContent');
+        
+        panel.style.display = 'block';
+        
+        if (comments.length === 0) {
+            content.innerHTML = "<p>No comments found for this tree.</p>";
+        } else {
+            content.innerHTML = comments.map(c => `
+                <div class="comment-card">
+                    <b style="color: #9b59b6;">@${c.username}</b> 
+                    <small style="float: right; color: #888;">${new Date(c.created_at).toLocaleDateString()}</small>
+                    <p style="margin: 5px 0;">${c.comment}</p>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error("View Comment Error:", error);
+        alert("Failed to retrieve comments.");
+    }
+};
+

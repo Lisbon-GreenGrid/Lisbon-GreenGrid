@@ -313,6 +313,26 @@
 			</div>
 		</nav>
 
+		<!-- Maintenance Logs Panel -->
+		<div id="maintenanceResultsPanel">
+			<div style="display: flex; justify-content: space-between; align-items: center;">
+				<h3 style="margin: 0;">Maintenance Logs</h3>
+				<button class="close-btn" onclick="this.parentElement.parentElement.style.display='none'" style="background:none; border:none; color:red; cursor:pointer; width: 40px; height: 40px;">X</button>
+			</div>
+			<div id="maintContent"></div>
+		</div>
+
+		<!-- Comments Panel -->
+		<div id="commentResultsPanel">
+			<div style="display: flex; justify-content: space-between; align-items: center;">
+				<h3 style="margin: 0;">Tree Comments</h3>
+				<button class="close-btn" 
+						onclick="this.parentElement.parentElement.style.display='none'; loadAllTrees();" 
+						style="background:none; border:none; color:red; cursor:pointer; width: 40px; height: 40px;">X</button>
+			</div>
+			<div id="commentContent"></div>
+		</div>
+
 		<!-- Leafletmap container -->
 		<div id="leaflet"></div>
 

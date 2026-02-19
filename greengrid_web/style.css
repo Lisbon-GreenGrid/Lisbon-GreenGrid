@@ -483,3 +483,85 @@ ul {
     color: var(--text-color); /*Dynamic text color*/
     font-size: 14px;
 }
+
+/* Styling the maintenance results log */
+#maintenanceResultsPanel {
+    position: absolute;
+    bottom: 30px;
+    left: 430px; 
+    width: 280px;
+    max-height: 40vh;
+    background: var(--sidebar-color);
+    color: var(--text-color);
+    z-index: 1000;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.3); 
+    overflow-y: auto;
+    display: none;
+    border: 1px solid #444;
+}
+
+.maint-card {
+    border-bottom: 1px solid #444;
+    padding: 10px 0;
+}
+
+.maint-card:last-child {
+    border-bottom: none;
+}
+
+#maintenanceResultsPanel button.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    color: red !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
+
+#commentResultsPanel {
+    position: absolute;
+    bottom: 30px;
+    left: 430px;
+    width: 280px;
+    max-height: 40vh;
+    background: var(--sidebar-color);
+    color: var(--text-color);
+    z-index: 1000;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.3); 
+    overflow-y: auto;
+    display: none;
+    border: 1px solid #444;
+}
+
+.comment-card {
+    border-bottom: 1px solid #444;
+    padding: 10px 0;
+}
+
+.comment-card:last-child {
+    border-bottom: none;
+}
+
+/* Reusing the nuclear-style close button from Maintenance */
+#commentResultsPanel button.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    color: red !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
