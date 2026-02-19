@@ -58,10 +58,12 @@ The database will be implemented in **PostgreSQL with the PostGIS extension** an
 | Table Name           | Description                                  | Spatial Data |
 | -------------------- | -------------------------------------------- | ------------ |
 | `trees`              | Individual urban trees and their locations   | POINT        |
-| `species`            | Reference table for tree species             | No           |
-| `Location Type`      | Is the tree located in a street, road or park? | No           |
-| `maintenance` | Is it maintained by the JF or CML?         | No           |
-| `parishes`          | Administrative districts of the city         | POLYGON      |
+| `operations`            | Reference table for specific maintenance operations | No           |
+| `maintenance`      | Maintenance records for the trees | No           |
+| `parish` | Administrative districts of Lisbon city        | No           |
+| `users`          | Details of users who make comments         | POLYGON      |
+| `comments`          | Reference table for comments made on different trees         | POLYGON      |
+
 
 
 ### 5.2 Core Table: `trees`
