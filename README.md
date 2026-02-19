@@ -83,6 +83,9 @@ Key attributes:
 * `freguesia` - Parish name
 * `geometry` (POINT geometry, SRID 20790)
 
+
+![Database Entity-Relationship Diagram Diagram](ER_diagram.jpeg)
+
 ---
 
 ## 6. ETL Module
