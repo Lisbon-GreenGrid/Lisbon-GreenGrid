@@ -60,9 +60,9 @@ The database will be implemented in **PostgreSQL with the PostGIS extension** an
 | `trees`              | Individual urban trees and their locations   | POINT        |
 | `operations`            | Reference table for specific maintenance operations | No           |
 | `maintenance`      | Maintenance records for the trees | No           |
-| `parish` | Administrative districts of Lisbon city        | No           |
-| `users`          | Details of users who make comments         | POLYGON      |
-| `comments`          | Reference table for comments made on different trees         | POLYGON      |
+| `parish` | Administrative districts of Lisbon city        | POLYGON           |
+| `users`          | Details of users who make comments         | N      |
+| `comments`          | Reference table for comments made on different trees         | No      |
 
 
 
@@ -70,13 +70,17 @@ The database will be implemented in **PostgreSQL with the PostGIS extension** an
 
 Key attributes:
 
-* `tree_id` (Primary Key)
-* `species` (Foreign Key)
-* `district` (Foreign Key)
-* `PAP`
-* `common_name`
-* `household`
-* `geom` (POINT geometry, SRID 20790)
+* `tree_id` (Primary Key) - Unique Tree ID from the Lisbon City Council
+* `nome_vulga` - Tree common name
+* `especie` - Scientific name
+* `tipologia` - Tree type
+* `pap` - Perimeter at breast height
+* `manutencao` - Authority in charge of a tree's maintenance
+* `ocupacao` - Occupation
+* `local` - Location
+* `morada` - Address
+* `freguesia` - Parish name
+* `geometry` (POINT geometry, SRID 20790)
 
 ---
 
