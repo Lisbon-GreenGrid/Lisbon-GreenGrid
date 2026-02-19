@@ -1,8 +1,8 @@
-# 🌳Lisbon-GreenGrid: Database Architecture
+# Lisbon-GreenGrid: Database Architecture
 
 This directory contains the SQL implementation for the Lisbon-GreenGrid urban forestry management system. The database is built on PostgreSQL with the PostGIS extension to handle spatial data for the trees in Lisbon.
 
-# 🏗️ The Staging-to-Production (SA/PA) Pattern
+# The Staging-to-Production (SA/PA) Pattern
 
 We utilize a Medallion Architecture (Staging and Production layers) to ensure data integrity:
 
@@ -10,7 +10,7 @@ SA (Staging Area): Where raw data from the Lisbon City Council website land firs
 
 PA (Production Area): The "clean" schema that feeds the web map frontend.
 
-# 📄 File Descriptions
+# File Descriptions
 
 `00-create_db.sql`: Creates the physical database container on the PostgreSQL server. Standardizes the database name (`lisbon_greengrid`) and sets the default encoding to `UTF-8` to support Portuguese special characters.
 
@@ -41,7 +41,7 @@ B-Tree Indexes: Applied to frequently searched attributes like 'freguesia' and '
 
 `create_db.py`: A Python automation script that handles the execution of `01-create_schemas`, `02-create_sa_tables`, `03-create_pa_tables`, `04-create_indexes`, and `05-create_triggers` SQL files, accordingly.
 
-# 🚀 Execution Procedure
+# Execution Procedure
 
 To set up the database from scratch, follow this specific order to respect data dependencies and constraints:
 
@@ -68,14 +68,12 @@ Once the trees are loaded, populate the related tables and verify the API logic:
 
 - Use `07-queries.sql` to verify the spatial joins and data counts.
 
-# 🛠️ Technical Stack
+# Technical Stack
 
-`Database`: PostgreSQL 16+
+`Database`: PostgreSQL 18
 
 `Spatial Extension`: PostGIS 3.4+
 
 `Language`: Python 3.x
 
 `Coordinate Reference System`: WGS '84 (EPSG:4326)
-
-*`Troubleshooting`: If the production table (pa.trees) is empty after the ETL, ensure the Python script is using `if_exists="append"` and that a `TRUNCATE` command was issued to preserve the triggers.*
