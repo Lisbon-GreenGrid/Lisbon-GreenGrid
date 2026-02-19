@@ -1,7 +1,6 @@
 const API_BASE_URL = "http://localhost:5000";
 
 // --- 1. MAP & BASEMAP INITIALIZATION ---
-
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 });
@@ -26,7 +25,6 @@ var map = new L.Map('leaflet', {
 map.zoomControl.setPosition("bottomright");
 
 // --- 1.2. LAYER MANAGEMENT ---
-
 // Create the group for tree markers and add it to the map by default
 const treeLayer = L.layerGroup().addTo(map);
 // Define the Base Maps
@@ -43,7 +41,6 @@ const AllTrees = {
 L.control.layers(baseMaps, AllTrees).addTo(map);
 
 // --- 1.3. All Trees LOADING ---
-
 function loadAllTrees() {
     fetch(`${API_BASE_URL}/trees`)
         .then(response => response.json())
@@ -113,7 +110,6 @@ document.querySelectorAll(".nav-link").forEach(link => {
 
 
 // --- 3. SECTION HANDLERS ---
-
 // --- 3.1. SEARCH BY SPECIES OR FREGUESIA ---
 // --- 1. POPULATE BOTH RECOMMENDATIONS ON LOAD ---
 function setupRecommendations() {
@@ -344,4 +340,181 @@ document.getElementById('nearTreeButton').onclick = function() {
     );
 };
 
+// -- 3.4. CREATE NEW TREE LOGIC ---
+document.getElementById('createTreeButton').onclick = async function() {
+    // 1. Gather data from the input fields
+    const payload = {
+        tree_id: document.getElementById('treeid').value,
+        nome_vulga: document.getElementById('name').value,
+        especie: document.getElementById('especie').value,
+        tipologia: document.getElementById('tipologia').value,
+        freguesia: document.getElementById('freg').value,
+        lon: parseFloat(document.getElementById('lon').value),
+        lat: parseFloat(document.getElementById('lat').value)
+    };
 
+    // 2. Basic Validation
+    if (!payload.tree_id || !payload.lat || !payload.lon) {
+        alert("Please fill in at least the Tree ID, Latitude, and Longitude.");
+        return;
+    }
+
+    try {
+        // 3. Send the POST request to your Flask API
+        const response = await fetch(`${API_BASE_URL}/tree`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message); // "Tree created successfully"
+            
+            // 4. Update the map: add the new tree marker immediately
+            const marker = L.circleMarker([payload.lat, payload.lon], {
+                radius: 7,
+                fillColor: "#27ae60",
+                color: "#fff",
+                weight: 2,
+                fillOpacity: 1
+            }).addTo(treeLayer);
+
+            marker.bindPopup(`<b>${payload.nome_vulga}</b><br>ID: ${payload.tree_id} (New)`);
+            
+            // 5. Center map on the new tree
+            map.flyTo([payload.lat, payload.lon], 17);
+
+            // Optional: Clear form fields after success
+            document.querySelectorAll('.sub-menu input').forEach(input => input.value = '');
+        } else {
+            alert("Error: " + (result.error || "Failed to create tree."));
+        }
+    } catch (error) {
+        console.error("Create Tree Error:", error);
+        alert("Could not connect to the database.");
+    }
+};
+
+// -- 3.5. UPDATE TREE LOGIC ---
+document.getElementById('updateTreeButton').onclick = async function() {
+    const container = this.closest('.sub-menu');
+    const treeId = container.querySelector('#treeid').value;
+    
+    // Gather updated data
+    const payload = {
+        nome_vulga: container.querySelector('#name').value,
+        especie: container.querySelector('#especie').value,
+        tipologia: container.querySelector('#tipologia').value,
+        morada: container.querySelector('#morada').value,
+        pap: container.querySelector('#pap').value,
+        manutencao: container.querySelector('#manutencao').value
+    };
+
+    if (!treeId) {
+        alert("Please enter a Tree ID to update.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+
+            // 1. Clear the map to focus on the edit
+            treeLayer.clearLayers();
+
+            // 2. Fetch the specific updated tree to get its current geometry
+            const detailRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
+            const tree = await detailRes.json();
+            
+            if (!tree.error) {
+                const geom = JSON.parse(tree.geometry);
+                const lat = geom.coordinates[1];
+                const lon = geom.coordinates[0];
+
+                // 3. Add the updated tree with a different color
+                const updatedMarker = L.circleMarker([lat, lon], {
+                    radius: 9, 
+                    fillColor: "#e67e22",
+                    color: "#fff",
+                    weight: 2,
+                    fillOpacity: 1
+                }).addTo(treeLayer);
+
+                // 4. Update Popup to show the new data
+                updatedMarker.bindPopup(`
+                    <div style="font-family: sans-serif;">
+                        <h4 style="margin:0; color:#e67e22;">Updated Tree #${tree.tree_id}</h4>
+                        <hr>
+                        <b>New Name:</b> ${payload.nome_vulga}<br>
+                        <b>New Species:</b> ${payload.especie}
+                    </div>
+                `).openPopup();
+
+                // 5. Zoom to the point
+                map.flyTo([lat, lon], 18);
+            }
+        } else {
+            alert("Error: " + (result.error || "Update failed"));
+        }
+    } catch (error) {
+        console.error("Update Error:", error);
+        alert("Could not connect to the server.");
+    }
+};
+
+// -- 3.6. DELETE TREE LOGIC ---
+document.getElementById('deleteTreeButton').onclick = async function() {
+    // 1. Get the ID from the input field in this section
+    const container = this.closest('.sub-menu');
+    const treeId = container.querySelector('#idFilter').value;
+
+    if (!treeId) {
+        alert("Please enter a Tree ID to delete.");
+        return;
+    }
+
+    // 2. Confirmation Dialog to prevent accidental deletions
+    const confirmDelete = confirm(`Are you sure you want to permanently delete Tree #${treeId}? This action cannot be undone.`);
+    
+    if (!confirmDelete) return;
+
+    try {
+        // 3. Send the DELETE request to your Flask API
+        const response = await fetch(`${API_BASE_URL}/tree/${treeId}`, {
+            method: 'DELETE'
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+
+            // 4. Update the UI: Remove the tree from the map
+            // Refresh the whole layer
+            loadAllTrees();
+
+            // 5. Clear the input field
+            container.querySelector('#idFilter').value = '';
+            
+            // Zoom back out to show the whole grid
+            map.flyTo([38.7448, -9.1607], 12.5);
+        } else {
+            alert("Error: " + (result.error || "Failed to delete the tree."));
+        }
+    } catch (error) {
+        console.error("Delete Error:", error);
+        alert("Could not connect to the server.");
+    }
+};
