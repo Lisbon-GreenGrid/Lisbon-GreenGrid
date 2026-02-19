@@ -113,8 +113,100 @@ document.querySelectorAll(".nav-link").forEach(link => {
 
 
 // --- 3. SECTION HANDLERS ---
-// --- FIND TREE BY ID LOGIC ---
 
+// --- 3.1. SEARCH BY SPECIES OR FREGUESIA ---
+// --- 1. POPULATE BOTH RECOMMENDATIONS ON LOAD ---
+function setupRecommendations() {
+    fetch(`${API_BASE_URL}/trees`)
+        .then(res => res.json())
+        .then(data => {
+            // 1. Handle Species Recommendations
+            const speciesDatalist = document.getElementById('treeNamesList');
+            const uniqueSpecies = [...new Set(data.map(tree => tree.especie).filter(Boolean))];
+            
+            speciesDatalist.innerHTML = uniqueSpecies
+                .map(name => `<option value="${name}">`)
+                .join('');
+
+            // 2. Handle Freguesia Recommendations
+            const fregDatalist = document.getElementById('fregList');
+            // Extract unique Freguesia names
+            const uniqueFreg = [...new Set(data.map(tree => tree.freguesia).filter(Boolean))];
+            
+            fregDatalist.innerHTML = uniqueFreg
+                .map(name => `<option value="${name}">`)
+                .join('');
+                
+            console.log("Recommendations loaded for Species and Parishes!");
+        })
+        .catch(err => console.error("Could not load recommendations:", err));
+}
+// Call the function to populate both datalists on page load 
+setupRecommendations();
+
+// --- 2. COMBINED FILTER LOGIC ---
+document.getElementById('filterBySpeciesORFraguesiaButton').onclick = function() {
+    const speciesVal = document.getElementById('nameFilter').value.trim();
+    const fregVal = document.getElementById('fregFilter').value.trim();
+
+    let apiUrl = "";
+
+    // Decide which API to hit based on which field has text
+    if (speciesVal) {
+        apiUrl = `${API_BASE_URL}/trees/species/${encodeURIComponent(speciesVal)}`;
+    } else if (fregVal) {
+        apiUrl = `${API_BASE_URL}/trees/freguesia/${encodeURIComponent(fregVal)}`;
+    } else {
+        alert("Please enter a Species name or a Parish (Freguesia)");
+        return;
+    }
+
+    fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                alert("No trees found for this filter.");
+                return;
+            }
+
+            // --- Clear the map and show only filtered results ---
+            treeLayer.clearLayers();
+            
+            // Create a bounds object to zoom the map to fit all results
+            const bounds = L.latLngBounds();
+
+            data.forEach(tree => {
+                const geom = JSON.parse(tree.geometry);
+                const lat = geom.coordinates[1];
+                const lon = geom.coordinates[0];
+                const latLng = [lat, lon];
+
+                const marker = L.circleMarker(latLng, {
+                    radius: 7,
+                    fillColor: "#3498db", // Different color (blue) for filtered results
+                    color: "#fff",
+                    weight: 2,
+                    fillOpacity: 0.9
+                });
+
+                marker.bindPopup(`
+                    <b>${tree.nome_vulga}</b><br>
+                    ID: ${tree.tree_id}<br>
+                    Freguesia: ${tree.freguesia}
+                `);
+
+                marker.addTo(treeLayer);
+                bounds.extend(latLng); // Add point to bounds
+            });
+
+            // Zoom the map to fit all the markers found
+            map.flyToBounds(bounds, { padding: [50, 50], duration: 1.5 });
+        })
+        .catch(err => console.error("Filter error:", err));
+};
+
+
+// --- 3.2. FIND TREE BY ID LOGIC ---
 document.getElementById('findTreeButton').onclick = function() {
     const treeId = document.getElementById('idFilter').value;
 
@@ -168,3 +260,88 @@ document.getElementById('findTreeButton').onclick = function() {
             console.error("Error finding tree:", err);
         });
 };
+
+// -- 3.3. NEAREST TREES LOGIC ---
+document.getElementById('nearTreeButton').onclick = function() {
+    const radius = document.getElementById('radiusFilter').value || 500;
+    const status = document.getElementById('locationStatus');
+
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser");
+        return;
+    }
+
+    status.innerText = "Locating...";
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            status.innerText = `Found: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+            fetch(`${API_BASE_URL}/trees/near?lat=${lat}&lon=${lon}&radius=${radius}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert("No trees found in this radius.");
+                        return;
+                    }
+
+                    treeLayer.clearLayers();
+                    const bounds = L.latLngBounds();
+
+                    // 1. User Location
+                    const userIcon = L.icon({
+                        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3595/3595598.png',
+                        iconSize: [40, 40]
+                    });
+                    L.marker([lat, lon], {icon: userIcon}).addTo(treeLayer).bindPopup("<b>You are here</b>").openPopup();
+                    bounds.extend([lat, lon]);
+
+                    // 2. Search Radius Circle
+                    const searchCircle = L.circle([lat, lon], {
+                        radius: parseInt(radius),
+                        color: '#2ecc71',
+                        fillOpacity: 0.1, 
+                        interactive: false
+                    }).addTo(treeLayer);
+
+                    // --- Include the entire circle in the map view ---
+                    bounds.extend(searchCircle.getBounds());
+
+                    // 3. Add found trees
+                    data.forEach(tree => {
+                        const geom = JSON.parse(tree.geometry);
+                        const treeCoords = [geom.coordinates[1], geom.coordinates[0]];
+                        
+                        const marker = L.circleMarker(treeCoords, {
+                            radius: 7,
+                            fillColor: "#27ae60",
+                            color: "#fff",
+                            fillOpacity: 1
+                        }).addTo(treeLayer);
+
+                        marker.bindPopup(`
+                            <b>${tree.nome_vulga}</b><br>
+                            ID: ${tree.tree_id}<br>
+                            <small>Species: ${tree.especie}</small>
+                        `);
+                        bounds.extend(treeCoords);
+                    });
+
+                    // --- DYNAMIC ZOOM: Automatically fits the radius and trees ---
+                    map.flyToBounds(bounds, { 
+                        padding: [50, 50], 
+                        duration: 1.5,
+                        maxZoom: 18 // Prevents it from zooming in too much on very small radii
+                    });
+                });
+        },
+        (error) => {
+            status.innerText = "Unable to retrieve location.";
+            alert("Error: " + error.message);
+        }
+    );
+};
+
+
