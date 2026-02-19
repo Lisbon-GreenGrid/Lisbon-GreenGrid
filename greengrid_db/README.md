@@ -46,15 +46,18 @@ B-Tree Indexes: Applied to frequently searched attributes like 'freguesia' and '
 To set up the database from scratch, follow this specific order to respect data dependencies and constraints:
 
 1. **Database Initialization**
+
 Run `00-create_db.sql` manually in pgAdmin while connected to the default postgres database. This creates the lisbon_greengrid container.
 
 2. **Automated Architecture Setup**
+
 Run the Python automation script to build the schemas, tables, and triggers:
 
 ```bash
 python create_db.py
 ```
 3. **Data Ingestion (ETL)**
+
 Run the Python ETL Script ([`main.py`](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/greengrid_etl/main.py)).
 
 The data will land in `sa.trees`.
@@ -62,6 +65,7 @@ The data will land in `sa.trees`.
 The `05-create_triggers` logic will automatically migrate the data into `pa.trees`.
 
 4. **Mock Data & Validation**
+
 Once the trees are loaded, populate the related tables and verify the API logic:
 
 - Run `06-data.sql` to add users and maintenance records.
@@ -77,3 +81,4 @@ Once the trees are loaded, populate the related tables and verify the API logic:
 `Language`: Python 3.x
 
 `Coordinate Reference System`: WGS '84 (EPSG:4326)
+
