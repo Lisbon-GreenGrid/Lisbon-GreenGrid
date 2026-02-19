@@ -86,6 +86,8 @@ Key attributes:
 
 ![Database Entity-Relationship Diagram Diagram](ER_diagram.jpeg)
 
+<img src="ER_diagram.jpeg" alt="Database ERD" width="500">
+
 ---
 
 ## 6. ETL Module
