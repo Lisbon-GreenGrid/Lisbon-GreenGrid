@@ -51,7 +51,7 @@ The datasets include geographic coordinates, species information, and basic tree
 
 ## 5. Database Design
 
-The database will be implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
+The database was implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
 More details about the database architecture and its execution procedure can be found in the [Database README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/greengrid_db/README.md)
 
 ### 5.1 Main Tables
