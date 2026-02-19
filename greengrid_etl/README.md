@@ -14,24 +14,31 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
 
 ## Structure
 
-              ┌──────────────┐
-              │   config/    │
-              └──────┬───────┘
-                     │
-              ┌──────▼───────┐
-              │   main.py    │
-              └──────┬───────┘
-                     │
-        ┌────────────┼────────────┐
-        │            │            │
-        ▼            ▼            ▼
-   `logs.py`     `db_connect.py`   `data_process.py`
-                    │               │
-                    │               ▼
-                    │         `Transform / Clean`
-                    │               │
-                    ▼               │
-               `Target Database` ◄────┘
+
+
+                        ┌──────────────┐
+                        │   config/    │
+                        └──────┬───────┘
+                               │
+                        ┌──────▼───────┐
+                        │   main.py    │
+                        └──────┬───────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+        ▼                      ▼                      ▼
+    ┌───────┐           ┌──────────────┐       ┌───────────────┐
+    │ logs.py│           │ db_connect.py│       │data_process.py│
+    └────────┘           └──────┬───────┘       └────────┬──────┘
+                                │                       │
+                                │                       ▼
+                                │                Transform / Clean
+                                │                        │
+                                └───────────────┬────────┘
+                                                ▼
+                                       ┌────────────────┐
+                                       │ Target Database│
+                                       └────────────────┘
 
 
 ## Module and Script Responsibilities
@@ -52,11 +59,11 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
 
 ## Installation and Deployment
 
-1. ### Database Initialization
+1. #### Database Initialization
 
 - Execute the SQL scripts located in the `/greengrid_db` directory.
 
-2. ### Environment Configuration
+2. #### Environment Configuration
 
 - Download and install MiniForge
 - Open the MiniForge Prompt
@@ -81,7 +88,7 @@ conda install --file etl_requirements.txt
 
 ```
 
-3. ### Execution
+3. #### Execution
 
 Run the application via the Python interpreter/VScode cmd terminal:
 
@@ -106,7 +113,7 @@ This enables:
 
 ## Technical Specification
 
-1. ### Design Goals
+#### Design Goals
 The ETL Module provides:
 - Modularity
 - Config-driven execution
@@ -114,3 +121,7 @@ The ETL Module provides:
 - Observability
 - Database abstraction
 
+
+## Tech Stack
+- Python 3.14.x
+- PostgreSQL/PostGIS
