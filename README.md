@@ -51,30 +51,40 @@ The datasets include geographic coordinates, species information, and basic tree
 
 ## 5. Database Design
 
-The database will be implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
+The database was implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
+More details about the database architecture and its execution procedure can be found in the [Database README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/greengrid_db/README.md)
 
 ### 5.1 Main Tables
 
 | Table Name           | Description                                  | Spatial Data |
 | -------------------- | -------------------------------------------- | ------------ |
 | `trees`              | Individual urban trees and their locations   | POINT        |
-| `species`            | Reference table for tree species             | No           |
-| `Location Type`      | Is the tree located in a street, road or park? | No           |
-| `maintenance` | Is it maintained by the JF or CML?         | No           |
-| `parishes`          | Administrative districts of the city         | POLYGON      |
+| `operations`            | Reference table for specific maintenance operations | No           |
+| `maintenance`      | Maintenance records for the trees | No           |
+| `parish` | Administrative districts of Lisbon city        | POLYGON           |
+| `users`          | Details of users who make comments         | No      |
+| `comments`          | Reference table for comments made on different trees         | No      |
+
 
 
 ### 5.2 Core Table: `trees`
 
 Key attributes:
 
-* `tree_id` (Primary Key)
-* `species` (Foreign Key)
-* `district` (Foreign Key)
-* `PAP`
-* `common_name`
-* `household`
-* `geom` (POINT geometry, SRID 20790)
+* `tree_id` (Primary Key) - Unique Tree ID from the Lisbon City Council
+* `nome_vulga` - Tree common name
+* `especie` - Scientific name
+* `tipologia` - Tree type
+* `pap` - Perimeter at breast height
+* `manutencao` - Authority in charge of a tree's maintenance
+* `ocupacao` - Occupation
+* `local` - Location
+* `morada` - Address
+* `freguesia` - Parish name
+* `geometry` (POINT geometry, SRID 20790)
+
+
+<img src="ER_diagram.jpeg" alt="Database ERD" width="800">
 
 ---
 
@@ -141,7 +151,7 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 ## 9. Authors
 
-* #### Christian Oluoma (20250854)
-* #### Saba Fatima (20250858)
-* #### Adebola Adedayo (20250853)
+* #### [Christian Oluoma (20250854)](https://github.com/OceeDiTT)
+* #### [Saba Fatima (20250858)](https://github.com/saba-fatima-eng)
+* #### [Adebola Adedayo (20250853)](https://github.com/adebolaadedayo)
 
