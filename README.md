@@ -52,6 +52,7 @@ The datasets include geographic coordinates, species information, and basic tree
 ## 5. Database Design
 
 The database will be implemented in **PostgreSQL with the PostGIS extension** and follows a relational model.
+More details about the database architecture and its execution procedure can be found in the [Database README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/greengrid_db/README.md)
 
 ### 5.1 Main Tables
 
@@ -61,7 +62,7 @@ The database will be implemented in **PostgreSQL with the PostGIS extension** an
 | `operations`            | Reference table for specific maintenance operations | No           |
 | `maintenance`      | Maintenance records for the trees | No           |
 | `parish` | Administrative districts of Lisbon city        | POLYGON           |
-| `users`          | Details of users who make comments         | N      |
+| `users`          | Details of users who make comments         | No      |
 | `comments`          | Reference table for comments made on different trees         | No      |
 
 
