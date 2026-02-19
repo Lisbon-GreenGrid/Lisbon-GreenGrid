@@ -14,7 +14,25 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
 
 ## Structure
 
+```
+greengrid_etl/
+├── config/
+│ └── 00.yml
+├── data/
+│ ├── original/tree.geojson
+│ ├── processed/tree.geojson
+│ └── static/lisbon_parishes.shp
+├── etl/
+│ ├── config.py
+│ ├── data_process.py
+│ ├── db_connect.py
+│ └── logs.py
+├── main.py
+├── environment.yml
+├── etl_environment.txt
+```
 
+### Data Flow Diagram
 
                         ┌──────────────┐
                         │   config/    │
