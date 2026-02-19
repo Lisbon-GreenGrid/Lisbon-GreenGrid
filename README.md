@@ -151,7 +151,7 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 ## 9. Authors
 
-* #### Christian Oluoma (20250854)
-* #### Saba Fatima (20250858)
-* #### Adebola Adedayo (20250853)
+* #### [Christian Oluoma (20250854)](https://github.com/OceeDiTT)
+* #### [Saba Fatima (20250858)](https://github.com/saba-fatima-eng)
+* #### [Adebola Adedayo (20250853)](https://github.com/adebolaadedayo)
 
