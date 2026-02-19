@@ -13,6 +13,7 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
 
 
 ## Structure
+
               ┌──────────────┐
               │   config/    │
               └──────┬───────┘
@@ -24,13 +25,13 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
         ┌────────────┼────────────┐
         │            │            │
         ▼            ▼            ▼
-   logs.py     db_connect.py   data_process.py
+   `logs.py`     `db_connect.py`   `data_process.py`
                     │               │
                     │               ▼
-                    │         Transform / Clean
+                    │         `Transform / Clean`
                     │               │
                     ▼               │
-               Target Database ◄────┘
+               `Target Database` ◄────┘
 
 
 ## Module and Script Responsibilities
@@ -60,14 +61,16 @@ This package implements a modular Extract–Transform–Load (ETL) pipeline, sep
 - Download and install MiniForge
 - Open the MiniForge Prompt
 
+Method1:
 ```cmd
 # Windows
-Method1:
 conda env create --file environment.yml
 
 conda activate etl_environment
+```
 
 Method2:
+```cmd
 conda create -n "environment name"
 
 conda activate "environment name"
@@ -78,7 +81,7 @@ conda install --file etl_requirements.txt
 
 ```
 
-3. Execution
+3. ### Execution
 
 Run the application via the Python interpreter/VScode cmd terminal:
 
@@ -86,3 +89,28 @@ Run the application via the Python interpreter/VScode cmd terminal:
 python main.py
 
 ```
+
+## Database Layer Abstraction
+
+The ETL separates:
+
+1. Business logic (data_process.py)
+2. Persistence logic (db_connect.py)
+
+This enables:
+
+- Switching databases without rewriting transformation logic
+- Unit testing without live DB dependency
+- Clear transactional boundaries
+
+
+## Technical Specification
+
+1. ### Design Goals
+The ETL Module provides:
+- Modularity
+- Config-driven execution
+- Reproducibility
+- Observability
+- Database abstraction
+
