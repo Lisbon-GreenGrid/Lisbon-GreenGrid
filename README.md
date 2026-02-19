@@ -151,7 +151,12 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 ## 9. Authors
 
-* #### [Christian Oluoma (20250854)](https://github.com/OceeDiTT)
-* #### [Saba Fatima (20250858)](https://github.com/saba-fatima-eng)
 * #### [Adebola Adedayo (20250853)](https://github.com/adebolaadedayo)
+He earned a bachelor's degree in Geoinformatics & Surveying from the university of Ilorin, Ilorin, Nigeria and is currently pursuing a master's degree in Geospatial Technologies at NOVA IMS, Universidade NOVA de Lisboa, Portugal.
+  
+* #### [Christian Oluoma (20250854)](https://github.com/OceeDiTT)
+He earned a bachelor's degree in Geoinformatics from the university of Nigeria, Nsukka (UNN), Nigeria and is currently pursuing a master's degree in Geospatial Technologies at NOVA IMS, Universidade NOVA de Lisboa, Portugal.
+  
+* #### [Saba Fatima (20250858)](https://github.com/saba-fatima-eng)
+She earned a bachelor's degree in Geoinformatics Engineering from the National Unbersity of Science and Technology, H-12 Campus, Ismalabad, Pakistan and is currently pursuing a master's degree in Geospatial Technologies at NOVA IMS, Universidade NOVA de Lisboa, Portugal.
 

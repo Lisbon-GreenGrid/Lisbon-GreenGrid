@@ -30,6 +30,7 @@ greengrid_etl/
 ├── main.py
 ├── environment.yml
 ├── etl_environment.txt
+└── README.md
 ```
 
 ### Data Flow Diagram
