@@ -166,7 +166,7 @@ CRUD operations is exposed through the API and executed against the relational d
 | GET    | `/trees/freguesia/{name}`       | Get trees within a freguesia          |
 | GET    | `/trees/species/{species}`      | Get trees by species                  |
 
-The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches.
+The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches. Fined the details on [API README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/api/README.md)
 
 ---
 
