@@ -7,7 +7,7 @@
     --primary-color-light: #d8e8d5;
     --toggle-color: #bbbbbb;
     --text-color: #1a1a1a;
-    --accent-colour: #f4b400; /* Lisbon Gold / Sunlight Yellow */
+    --accent-colour: #bfe5c8;
     /* Transition */
     --tran-02: all 0.2s ease;
     --tran-03: all 0.3s ease;
@@ -22,7 +22,7 @@ body.dark{
     --primary-color-light: #3a3c3b;
     --toggle-color: #dddddd;
     --text-color: #e7e7e7;
-    --accent-colour: #ffcc33; /* A brighter, more 'neon' gold for the dark */
+    --accent-colour: #ffffff; 
 }
 /*Styling of the text*/
 .justify-text{
@@ -111,7 +111,7 @@ textarea{
     left: 0;
     height: 100%;
     width: 400px;
-    padding: 10px 14px;
+    padding: 0px 12px;
     background-color: var(--sidebar-color); /*Dynamic sidebaer color*/
     border-right: 1px solid #e0e0e0; /* Subtle grey separator from the map */
     box-shadow: 4px 0px 10px rgba(0,0,0,0.05); /* Soft shadow */
