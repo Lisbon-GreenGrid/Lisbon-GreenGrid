@@ -151,14 +151,20 @@ CRUD operations is exposed through the API and executed against the relational d
 
 ### 8.1 Available Endpoints
 
-| Method | Endpoint                        | Description                       |
-| ------ | ------------------------------- | --------------------------------- |
-| GET    | `/trees`                        | Retrieve all trees                |
-| GET    | `/trees/{id}`                   | Retrieve a tree by ID             |
-| POST   | `/trees`                        | Insert a new tree                 |
-| PUT    | `/trees/{id}`                   | Update a tree                     |
-| DELETE | `/trees/{id}`                   | Delete a tree                     |
-| GET    | `/trees/near?lat=&lon=&radius=` | Find nearby trees (spatial query) |
+| Method | Endpoint                        | Description                           |
+| ------ | ------------------------------- | ------------------------------------- |
+| GET    | `/trees`                        | Retrieve all trees                    |
+| GET    | `/trees/{id}`                   | Retrieve a tree by ID                 |
+| GET    | `/tree/{id}/comments`           | Get comment history (with limit)      |
+| GET    | `/tree/{id}/maintenance`        | Get maintenance history (with limit)  |
+| POST   | `/trees`                        | Insert a new tree                     |
+| POST   | `/tree/{id}/comment             | Add a new comment                     |
+| POST   | `/tree/{id}/maintenance`        | Add a new maintenance status          |
+| PUT    | `/trees/{id}`                   | Update a tree                         |
+| DELETE | `/trees/{id}`                   | Delete a tree                         |
+| GET    | `/trees/near?lat=&lon=&radius=` | Find nearby trees (spatial query)     |
+| GET    | `/trees/freguesia/{name}`       | Get trees within a freguesia          |
+| GET    | `/trees/species/{species}`      | Get trees by species                  |
 
 The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches.
 
