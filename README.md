@@ -1,10 +1,14 @@
 <p align="center">
-  <img src="greengrid_web/tree_logo.ico" width="120"><br><br>
-  <span style="font-size:28px; font-weight:bold; color:#2d5a27;">
-    Lisbon GreenGrid
-  </span><br>
+  <img src="greengrid_web/tree_logo.ico" width="120" /><br><br>
+</p>
+
+<h1 align="center">
+  <span style="color:#2d5a27;">Lisbon GreenGrid</span>
+</h1>
+
+<p align="center">
   <span style="color:#f4b400;">
-   Urban Tree Inventory & Maintenance Management System
+    Urban Tree Inventory & Maintenance Management System
   </span>
 </p>
 
@@ -14,7 +18,6 @@
   <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white" />
   <img alt="GeoPandas" src="https://img.shields.io/badge/GeoPandas-139C5A?logo=pandas&logoColor=white" />
   <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white" />
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" />
 </p>
 
 
@@ -42,7 +45,7 @@ The main objectives of this project include:
 
 The system follows a clear and modular architecture:
 
-<img src="Asset/system architecture.png" alt="System Architecture Image">
+<img src="Asset/system architecture.png" alt="System Architecture Image" width="800">
 
 Each component is independent and can be executed or tested separately.Input data in GeoJSON format is extracted, normalized, validated, and loaded into the target database.
 
