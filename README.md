@@ -15,8 +15,7 @@
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" />
   <img alt="SQL" src="https://img.shields.io/badge/SQL-336791?logo=postgresql&logoColor=white" />
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white" />
-  <img alt="GeoPandas" src="https://img.shields.io/badge/GeoPandas-139C5A?logo=pandas&logoColor=white" />
+  <img alt="Flask" src="https://img.shields.io/badge/-Flask-000000?logo=flask&logoColor=white" />
   <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white" />
 </p>
 
@@ -150,14 +149,7 @@ CRUD operations is exposed through the API and executed against the relational d
 
 ## 8. API Module
 
-### 8.1 Technology Stack
-
-Proposed technology include:
-* Python
-* FastAPI or Flask
-* psycopg2 or SQLAlchemy
-
-### 8.2 Available Endpoints
+### 8.1 Available Endpoints
 
 | Method | Endpoint                        | Description                       |
 | ------ | ------------------------------- | --------------------------------- |
@@ -170,8 +162,72 @@ Proposed technology include:
 
 The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches.
 
+---
 
-## 9. Authors
+## 9. Setup and Execution
+
+1. **Database Setup.** Navigate to the `greengrid_db` folder and execute the following in order:
+- `00-create_db.sql` in pgAdmin
+- `create_db.py` in the default a python environment (creates schemas, tables, indexes and triggers)
+- `06-data.sql` in pgAdmin after the execution of the ETL package.
+  
+2. **Environment Setup.** For both the ETL and API, install dependecies from either the `requirements.txt` or `environment.yml`. Follow the information available in their respective README section.
+
+4. **ETL Process.** Navigate to the `greengrid_etl` folder and run `main.py`.
+
+6. **API Activation.** Navigate to the `api` folder and run `api.py`.
+
+8. **Webpage Launch.** Navigate to the `greengrid_web` folder and open `index.html` using a web browser.
+
+---
+
+## 10. Results
+
+| Key Feature                     | Demonstration                     |
+| ------------------------------- | --------------------------------- |
+| ①`Retractable sidebar and dynamic basemap`| Retrieve all trees|
+| ②`Filter Trees by Name`| Retrieve a tree by ID|
+| ③`Filter Trees by Parish`| Insert a new tree|
+| ④`Find a specific Tree by ID`| Update a tree|
+| ⑤`Find nearest Trees within a buffer`| Delete a tree|
+| ⑥`Create a new Tree record`| Find nearby trees (spatial query)|
+| ⑦`Update an existing Tree record`| Find nearby trees (spatial query)|
+| ⑧`Delete removed Tree`| Find nearby trees (spatial query)|
+| ⑨`Add a new Tree maintenance record`| Find nearby trees (spatial query)|
+| ⑩`View Maintenance record of a Tree`| Find nearby trees (spatial query)|
+| ⑪`Add a new comment to a specific Tree`| Find nearby trees (spatial query)|
+| ⑫`View comments on a specific Tree`| Find nearby trees (spatial query)|
+| ⑬`View contact information of developers`| Find nearby trees (spatial query)|
+| ⑭`Switch to dark/light modes`| Find nearby trees (spatial query)|
+| ⑮`Map functional buttons`| Find nearby trees (spatial query)|
+
+---
+
+## 11. Future Direction
+- User dedicated page for sign-up and Usage
+- Enhance User Experience & Accessibility
+
+---
+
+## 12. Technology Stack
+Technology used include:
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" />
+  <img alt="SQL" src="https://img.shields.io/badge/SQL-336791?logo=postgresql&logoColor=white" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white" />
+  <img alt="PostGIS" src="https://img.shields.io/badge/-PostGIS-316192?logo=postgis&logoColor=white" />
+  <img alt="Flask" src="https://img.shields.io/badge/-Flask-000000?logo=flask&logoColor=white" />
+  <img alt="REST API" src="https://img.shields.io/badge/-REST_API-4A90E2?logo=api&logoColor=white" />
+  <img alt="HTML5" src="https://img.shields.io/badge/-HTML5-E34F26?logo=html5&logoColor=white" />
+  <img alt="CSS3" src="https://img.shields.io/badge/-CSS3-1572B6?logo=css3&logoColor=white" />
+  <img alt="JavaScript" src="https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=black" />
+  <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white" />
+</p>
+
+---
+
+## 13. Authors
 
 * #### [Adebola Adedayo (20250853)](https://github.com/adebolaadedayo)
 He earned a bachelor's degree in Geoinformatics & Surveying from the university of Ilorin, Ilorin, Nigeria and is currently pursuing a master's degree in Geospatial Technologies at NOVA IMS, Universidade NOVA de Lisboa, Portugal.
