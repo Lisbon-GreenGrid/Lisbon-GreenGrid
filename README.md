@@ -46,7 +46,7 @@ The system follows a clear and modular architecture:
 
 <img src="Asset/system architecture.png" alt="System Architecture Image" width="800">
 
-Each component is independent and can be executed or tested separately.Input data in GeoJSON format is extracted, normalized, validated, and loaded into the target database.
+Each component is independent and can be executed or tested separately. Input data in GeoJSON format is extracted, normalized, validated, and loaded into the target database.
 
 ---
 
