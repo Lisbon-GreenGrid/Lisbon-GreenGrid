@@ -66,8 +66,15 @@ function loadAllTrees() {
                         <h4 style="margin:0; color:#2d5a27;">${tree.nome_vulga}</h4>
                         <hr>
                         <b>ID:</b> ${tree.tree_id}<br>
+                        <b>Common Name:</b> ${tree.nome_vulga}<br>
                         <b>Species:</b> <i>${tree.especie}</i><br>
-                        <b>Authority:</b> ${tree.manutencao}
+                        <b>Typology:</b> ${tree.tipologia}<br>
+                        <b>PAP:</b> ${tree.pap}<br>
+                        <b>Authority:</b> ${tree.manutencao}<br>
+                        <b>Occupation:</b> ${tree.ocupacao}<br>
+                        <b>Local:</b> ${tree.local}<br>
+                        <b>Address:</b> ${tree.morada}<br>
+                        <b>Freguesia:</b> ${tree.freguesia}
                     </div>
                 `);
 
