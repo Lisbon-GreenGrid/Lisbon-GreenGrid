@@ -1,22 +1,43 @@
-# Lisbon_GreenGrid
+<p align="center">
+  <img src="greengrid_web/tree_logo.ico" width="120" /><br><br>
+</p>
+
+<h1 align="center">
+  <span style="color:#2d5a27;">Lisbon GreenGrid</span>
+</h1>
+
+<p align="center">
+  <span style="color:#f4b400;">
+    Urban Tree Inventory & Maintenance Management System
+  </span>
+</p>
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" />
+  <img alt="SQL" src="https://img.shields.io/badge/SQL-336791?logo=postgresql&logoColor=white" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white" />
+  <img alt="GeoPandas" src="https://img.shields.io/badge/GeoPandas-139C5A?logo=pandas&logoColor=white" />
+  <img alt="Leaflet" src="https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white" />
+</p>
+
 
 ## 1. Introduction
 
-Urban trees play a crucial role in improving air quality, mitigating urban heat, and enhancing the quality of life in cities. Municipal governments and urban planners often maintain detailed inventories of trees to monitor their condition and plan maintenance activities.
+Urban trees play a crucial role in improving air quality, mitigating urban heat, and enhancing the quality of life in cities. Municipal governments and urban planners often need to maintain detailed inventories of trees to monitor their condition and plan maintenance activities.
 
-Lisbon_GreenGrid is an urban tree inventory & maintenance management system. This project aims to develop a simple yet robust system for managing urban trees in Lisbon city. The system stores spatial information about trees, their species, size, location, other relevant info, and the authority responsible for maintenance. It enables city planners or maintenance teams to efficiently query, insert, update, and manage tree-related data through an API.
+Lisbon_GreenGrid is an urban tree inventory & maintenance management system. This project aims to develop a simple yet robust system for managing urban trees in Lisbon city. The system stores spatial information about trees, their species, size, location, other relevant info, and the authority responsible for maintenance status. It enables city planners or maintenance teams to efficiently query, insert, update, and manage tree-related data through a web application.
 
 ---
 
 ## 2. Project Objectives
 
-The main objectives of this project are:
+The main objectives of this project include:
 
-* To design a relational spatial database for managing urban tree data
-* To build an independent ETL module that loads open urban tree data into the database
-* To expose database operations through an API
+* To centralize and manage urban tree inventory data in a structured spatial database.
+* To support data-driven maintenance planning and risk assessment.
+* To enable sustainable urban forestry decision-making.
+* To provide an interactive map interface for visualization and analysis.
 * To support full Create, Read, Update, and Delete (CRUD) operations
-* To demonstrate spatial querying using PostGIS
 
 ---
 
@@ -24,28 +45,19 @@ The main objectives of this project are:
 
 The system follows a clear and modular architecture:
 
-```
-Open Data (CSV / GeoJSON)
-        ↓
-      ETL (Python)
-        ↓
-PostgreSQL + PostGIS
-        ↓
-  API (Python)
-```
+<img src="Asset/system architecture.png" alt="System Architecture Image" width="800">
 
-Each component is independent and can be executed or tested separately.
+Each component is independent and can be executed or tested separately.Input data in GeoJSON format is extracted, normalized, validated, and loaded into the target database.
 
 ---
 
 ## 4. Dataset
 
-The project will use **open-access urban tree datasets**, typically provided by:
+The project employed **open-access urban tree datasets**, typically provided by:
 
-* Lisbon open data portal (Portal Dados Abertos): https://dados.cm-lisboa.pt/dataset/arvoredo 
-* OpenStreetMap
+* Lisbon open data portal (Portal Dados Abertos): https://dados.cm-lisboa.pt/dataset/arvoredo
 
-The datasets include geographic coordinates, species information, and basic tree attributes. All datasets proposed are open source and free to use.
+The dataset include geographic coordinates, species information, and basic tree attributes. **Lisbon Parishes shapefile** obtained from [CAOP 2024](https://www.dgterritorio.gov.pt/atividades/cartografia/cartografia-tematica/caop) was also used in this project. All datasets used are open source and free to use.
 
 ---
 
@@ -81,7 +93,7 @@ Key attributes:
 * `local` - Location
 * `morada` - Address
 * `freguesia` - Parish name
-* `geometry` (POINT geometry, SRID 20790)
+* `geometry` (POINT geometry, SRID 4326)
 
 
 <img src="ER_diagram.jpeg" alt="Database ERD" width="800">
@@ -90,26 +102,36 @@ Key attributes:
 
 ## 6. ETL Module
 
-### 6.1 Purpose
+### 6.1 Overview
 
-The ETL module will be responsible for extracting raw tree data, transforming it into a clean and consistent format, and loading it into the PostgreSQL/PostGIS database.
+The ETL pipeline follows a modular architecture:
 
-### 6.2 Execution
+1. Configuration Layer
+2. Extraction Layer
+3. Transformation Layer
+4. Loading Layer
+5. Logging Layer
 
-The ETL will run independently using a single command:
 
-```bash
-python etl/load_trees.py
+### 6.2 ETL Workflow
+
+1. Extracting raw data in GeoJSON format
+2. Cleaning and transforming the dataset
+3. Loading structured data into a POSTGIS database
+4. Logging pipeline execution
+
+
+### 6.3 Execution
+
+The ETL runs independently using a single command:
+
+```cmd
+
+python main.py
+
 ```
 
-### 6.3 ETL Workflow
-
-1. Extract tree data from CSV or GeoJSON files
-2. Clean and normalize species names
-3. Validate geographic coordinates
-4. Convert coordinates into PostGIS geometry objects
-5. Insert unique species into the `species` table
-6. Insert tree records into the `trees` table
+Detailed information on the ETL structure, workflow and implementation can be found in the [ETL README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/greengrid_etl/README.md)
 
 ---
 
@@ -122,7 +144,7 @@ The project supports full CRUD functionality:
 * **Update** tree attributes and maintenance records
 * **Delete** obsolete or removed trees
 
-CRUD operations will be exposed through the API and executed against the relational database.
+CRUD operations is exposed through the API and executed against the relational database.
 
 ---
 
