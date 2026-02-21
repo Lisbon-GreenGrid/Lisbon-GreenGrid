@@ -109,7 +109,8 @@ conda install --file etl_requirements.txt
 
 3. #### Execution
 
-Run the application via the Python interpreter/VScode cmd terminal:
+- Locate the `config/00.yml` file and input your database password.
+- Run the application via the Python interpreter/VScode cmd terminal:
 
 ```cmd
 python main.py
