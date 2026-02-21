@@ -1,10 +1,18 @@
 from .logs import die, info
+from .config import read_config
 import requests
 import pandas as pd
 import geopandas as gpd
 from sqlalchemy import create_engine
 import re
 
+# Extract database info from the configuration file
+config = read_config("./config/00.yml")
+username= config["database"]["username"]
+password= config["database"]["password"]
+host= config["database"]["host"]
+port= config["database"]["port"]
+database= config["database"]["database"]
 
 def download_data(url: str, fname: str) -> None:
     """Downloads data from URL and store it in a local file
@@ -21,17 +29,17 @@ def download_data(url: str, fname: str) -> None:
         with open(fname, "wb") as f:
             f.write(r.content)
     except Exception as e:
-        e.die(f"{e}")
+        die(f"{e}")
 
 
-def read_geojson(fname: str,) -> gpd.DataFrame:
+def read_geojson(fname: str,) -> gpd.GeoDataFrame:
     """Reads a GeoJSON file into a GeoPandas dataframe
 
     Args:
         fname (str): the name of the GeoJSON file
 
     Returns:
-        gpd.DataFrame: a geodataframe
+        gpd.GeoDataFrame: a geodataframe
     """
     try:
         gdf = gpd.read_file(fname)
@@ -41,11 +49,14 @@ def read_geojson(fname: str,) -> gpd.DataFrame:
 
 
 def write_geojson(gdf: gpd.GeoDataFrame, fname: str) -> None:
-    """ Writes a GeoPandas dataframe into a GeoJSON
+    """ Writes a GeoPandas dataframe into a GeoJSON file
 
     Args:
         gdf (gpd.GeoDataFrame): the geodataframe
         fname (str): the file name
+        
+    Returns:
+        None
     """
     try:
         gdf.to_file(
@@ -59,7 +70,7 @@ def write_geojson(gdf: gpd.GeoDataFrame, fname: str) -> None:
         
 def load_shapefile(fname: str, config: dict):
     """
-    Reads a Shapefile into and Geopandas dataframe
+    Reads a Shapefile into a Geopandas dataframe,
     Transforms the data and Load the data into the table.
 
     Args:
@@ -73,7 +84,7 @@ def load_shapefile(fname: str, config: dict):
         gdf = gdf.to_crs('EPSG:4326')
       
         engine = create_engine(
-           "postgresql://postgres:20250854@localhost:5432/lisbon_greengrid"
+           f"postgresql://{username}:{password}@{host}:{port}/{database}"
         )
         with engine.begin() as connection:
             gdf.to_postgis(
