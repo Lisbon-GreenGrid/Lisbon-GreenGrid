@@ -191,7 +191,7 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 | Key Feature                     | Demonstration                     |
 | ------------------------------- | --------------------------------- |
-| ①`Retractable sidebar and dynamic basemap`| Retrieve all trees|
+| ①`Retractable sidebar and dynamic basemap`| <img src="./Asset/gif_1.gif">|
 | ②`Filter Trees by Name`| Retrieve a tree by ID|
 | ③`Filter Trees by Parish`| Insert a new tree|
 | ④`Find a specific Tree by ID`| Update a tree|
@@ -203,9 +203,9 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 | ⑩`View Maintenance record of a Tree`| Find nearby trees (spatial query)|
 | ⑪`Add a new comment to a specific Tree`| Find nearby trees (spatial query)|
 | ⑫`View comments on a specific Tree`| Find nearby trees (spatial query)|
-| ⑬`View contact information of developers`| Find nearby trees (spatial query)|
-| ⑭`Switch to dark/light modes`| Find nearby trees (spatial query)|
-| ⑮`Map functional buttons`| Find nearby trees (spatial query)|
+| ⑬`View contact information of developers`| <img src="./Asset/gif_13.gif">|
+| ⑭`Switch to dark/light modes`| <img src="./Asset/gif_14.gif">|
+| ⑮`Map functional buttons`| <img src="./Asset/gif_15.gif">|
 
 ---
 
