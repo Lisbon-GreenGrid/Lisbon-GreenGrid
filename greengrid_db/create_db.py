@@ -24,7 +24,7 @@ def build_structure():
     }
 
     # Directory containing the SQL files
-    sql_folder = r"C:\Users\Victus\Documents\Lisbon-GreenGrid\greengrid_db"  # **Update with your folder path
+    sql_folder = r"C:\Users\Victus\Documents\Lisbon-GreenGrid\greengrid_db"  # **Update with the correct folder path
     
     # List of SQL files
     sql_files = [
@@ -66,4 +66,5 @@ def build_structure():
             conn.close()
 
 if __name__ == "__main__":
+
     build_structure()
