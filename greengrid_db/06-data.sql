@@ -12,7 +12,7 @@ INSERT INTO pa.users (username, first_name, last_name, email) VALUES
 ('tree_checker', 'Sofia', 'Mendes', 'sofia.m@example.com'),
 ('botany_pro', 'Elena', 'Vasco', 'elena.v@ulisboa.pt');
 
-
+-- 3. FILL pa.maintenance
 INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) VALUES
 (1, 4, 'Routine check, tree appears healthy.', 'Inspector John', '2026-01-10'),
 (1, 1, 'Crown thinning performed.', 'Arbor Team A', '2026-02-05'),
@@ -75,6 +75,7 @@ INSERT INTO pa.maintenance (tree_id, op_code, observation, officer, maint_date) 
 (8, 4, 'Stability check after heavy rain.', 'Inspector Mary', '2026-03-12'),
 (14, 1, 'Pollarding for management.', 'Arbor Team A', '2026-03-13');
 
+-- 4. FILL pa.comments
 INSERT INTO pa.comments (username, tree_id, comment, created_at) VALUES
 ('pak_student', 5, 'Checking the cork oak on campus today. Looks healthy.', '2026-02-13 09:00:00'),
 ('saba_f', 1, 'The Olea europaea is ancient and beautiful.', '2026-02-14 10:15:00'),
