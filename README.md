@@ -192,17 +192,17 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 | Key Feature                     | Demonstration                     |
 | ------------------------------- | --------------------------------- |
 | ①`Retractable sidebar and dynamic basemap`| <img src="./Asset/gif_1.gif">|
-| ②`Filter Trees by Name`| Retrieve a tree by ID|
-| ③`Filter Trees by Parish`| Insert a new tree|
-| ④`Find a specific Tree by ID`| Update a tree|
-| ⑤`Find nearest Trees within a buffer`| Delete a tree|
-| ⑥`Create a new Tree record`| Find nearby trees (spatial query)|
-| ⑦`Update an existing Tree record`| Find nearby trees (spatial query)|
-| ⑧`Delete removed Tree`| Find nearby trees (spatial query)|
-| ⑨`Add a new Tree maintenance record`| Find nearby trees (spatial query)|
-| ⑩`View Maintenance record of a Tree`| Find nearby trees (spatial query)|
-| ⑪`Add a new comment to a specific Tree`| Find nearby trees (spatial query)|
-| ⑫`View comments on a specific Tree`| Find nearby trees (spatial query)|
+| ②`Filter Trees by Name`| <img src="./Asset/gif_2.gif">|
+| ③`Filter Trees by Parish`| <img src="./Asset/gif_3.gif">|
+| ④`Find a specific Tree by ID`| <img src="">|
+| ⑤`Find nearest Trees within a buffer`| <img src="">|
+| ⑥`Create a new Tree record`| <img src="">|
+| ⑦`Update an existing Tree record`| <img src="">|
+| ⑧`Delete removed Tree`| <img src="">|
+| ⑨`Add a new Tree maintenance record`| <img src="./Asset/gif_9.gif">|
+| ⑩`View Maintenance record of a Tree`| <img src="./Asset/gif_10.gif">|
+| ⑪`Add a new comment to a specific Tree`| <img src="./Asset/gif_11.gif">|
+| ⑫`View comments on a specific Tree`| <img src="./Asset/gif_12.gif">|
 | ⑬`View contact information of developers`| <img src="./Asset/gif_13.gif">|
 | ⑭`Switch to dark/light modes`| <img src="./Asset/gif_14.gif">|
 | ⑮`Map functional buttons`| <img src="./Asset/gif_15.gif">|
