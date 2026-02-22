@@ -193,9 +193,16 @@ document.getElementById('filterBySpeciesORFraguesiaButton').onclick = function()
                 });
 
                 marker.bindPopup(`
-                    <b>${tree.nome_vulga}</b><br>
-                    ID: ${tree.tree_id}<br>
-                    Freguesia: ${tree.freguesia}
+                    <b>ID:</b> ${tree.tree_id}<br>
+                    <b>Common Name:</b> ${tree.nome_vulga || 'N/A'}<br>
+                    <b>Species:</b> <i>${tree.especie || 'N/A'}</i><br>
+                    <b>Typology:</b> ${tree.tipologia || 'N/A'}<br>
+                    <b>PAP:</b> ${tree.pap || 'N/A'}<br>
+                    <b>Authority:</b> ${tree.manutencao || 'N/A'}<br>
+                    <b>Occupation:</b> ${tree.ocupacao || 'N/A'}<br>
+                    <b>Local:</b> ${tree.local || 'N/A'}<br>
+                    <b>Address:</b> ${tree.morada || 'N/A'}<br>
+                    <b>Freguesia:</b> ${tree.freguesia || 'N/A'}
                 `);
 
                 marker.addTo(treeLayer);
@@ -255,7 +262,14 @@ document.getElementById('findTreeButton').onclick = function() {
                     <h4 style="margin:0; color:#e74c3c;">Tree Found (ID: ${tree.tree_id})</h4>
                     <hr>
                     <b>Common Name:</b> ${tree.nome_vulga || 'N/A'}<br>
-                    <b>Species:</b> <i>${tree.especie || 'N/A'}</i>
+                    <b>Species:</b> <i>${tree.especie || 'N/A'}</i><br>
+                    <b>Typology:</b> ${tree.tipologia || 'N/A'}<br>
+                    <b>PAP:</b> ${tree.pap || 'N/A'}<br>
+                    <b>Authority:</b> ${tree.manutencao || 'N/A'}<br>
+                    <b>Occupation:</b> ${tree.ocupacao || 'N/A'}<br>
+                    <b>Local:</b> ${tree.local || 'N/A'}<br>
+                    <b>Address:</b> ${tree.morada || 'N/A'}<br>
+                    <b>Freguesia:</b> ${tree.freguesia || 'N/A'}
                 </div>
             `).openPopup();
         })
@@ -325,9 +339,16 @@ document.getElementById('nearTreeButton').onclick = function() {
                         }).addTo(treeLayer);
 
                         marker.bindPopup(`
-                            <b>${tree.nome_vulga}</b><br>
-                            ID: ${tree.tree_id}<br>
-                            <small>Species: ${tree.especie}</small>
+                            <b>ID:</b> ${tree.tree_id}<br>
+                            <b>Common Name:</b> ${tree.nome_vulga || 'N/A'}<br>
+                            <b>Species:</b> <i>${tree.especie || 'N/A'}</i><br>
+                            <b>Typology:</b> ${tree.tipologia || 'N/A'}<br>
+                            <b>PAP:</b> ${tree.pap || 'N/A'}<br>
+                            <b>Authority:</b> ${tree.manutencao || 'N/A'}<br>
+                            <b>Occupation:</b> ${tree.ocupacao || 'N/A'}<br>
+                            <b>Local:</b> ${tree.local || 'N/A'}<br>
+                            <b>Address:</b> ${tree.morada || 'N/A'}<br>
+                            <b>Freguesia:</b> ${tree.freguesia || 'N/A'}
                         `);
                         bounds.extend(treeCoords);
                     });
@@ -349,13 +370,21 @@ document.getElementById('nearTreeButton').onclick = function() {
 
 // -- 3.4. CREATE NEW TREE LOGIC ---
 document.getElementById('createTreeButton').onclick = async function() {
+    // 1. Scope to the "Create Tree" sub-menu
+    const container = this.closest('.sub-menu');
+
     // 1. Gather data from the input fields
     const payload = {
         tree_id: document.getElementById('treeid').value,
-        nome_vulga: document.getElementById('name').value,
-        especie: document.getElementById('especie').value,
-        tipologia: document.getElementById('tipologia').value,
-        freguesia: document.getElementById('freg').value,
+        nome_vulga: container.querySelector('#name').value,
+        especie: container.querySelector('#especie').value,
+        tipologia: container.querySelector('#tipologia').value,
+        local: container.querySelector('#local').value,
+        morada: container.querySelector('#morada').value,
+        pap: container.querySelector('#pap').value,
+        manutencao: container.querySelector('#manutencao').value,
+        ocupacao: container.querySelector('#ocupacao').value,
+        freguesia: container.querySelector('#freg').value,
         lon: parseFloat(document.getElementById('lon').value),
         lat: parseFloat(document.getElementById('lat').value)
     };
@@ -390,7 +419,21 @@ document.getElementById('createTreeButton').onclick = async function() {
                 fillOpacity: 1
             }).addTo(treeLayer);
 
-            marker.bindPopup(`<b>${payload.nome_vulga}</b><br>ID: ${payload.tree_id} (New)`);
+            marker.bindPopup(`
+                    <div style="font-family: sans-serif;">
+                    <h4 style="margin:0; color:#e67e22;">Created Tree #${payload.tree_id}</h4>
+                    <hr>
+                    <b>Name:</b> ${payload.nome_vulga}<br>
+                    <b>Common Name:</b> ${payload.nome_vulga || 'N/A'}<br>
+                    <b>Species:</b> <i>${payload.especie || 'N/A'}</i><br>
+                    <b>Typology:</b> ${payload.tipologia || 'N/A'}<br>
+                    <b>PAP:</b> ${payload.pap || 'N/A'}<br>
+                    <b>Authority:</b> ${payload.manutencao || 'N/A'}<br>
+                    <b>Occupation:</b> ${payload.ocupacao || 'N/A'}<br>
+                    <b>Local:</b> ${payload.local || 'N/A'}<br>
+                    <b>Address:</b> ${payload.morada || 'N/A'}<br>
+                    <b>Freguesia:</b> ${payload.freguesia || 'N/A'}
+                    </div>`).openPopup();
             
             // 5. Center map on the new tree
             map.flyTo([payload.lat, payload.lon], 17);
@@ -402,7 +445,7 @@ document.getElementById('createTreeButton').onclick = async function() {
         }
     } catch (error) {
         console.error("Create Tree Error:", error);
-        alert("Could not connect to the database.");
+        alert("Error: " + (result.error || "Failed to create tree."));
     }
 };
 
@@ -411,14 +454,16 @@ document.getElementById('updateTreeButton').onclick = async function() {
     const container = this.closest('.sub-menu');
     const treeId = container.querySelector('#treeid').value;
     
-    // Gather updated data
     const payload = {
         nome_vulga: container.querySelector('#name').value,
         especie: container.querySelector('#especie').value,
         tipologia: container.querySelector('#tipologia').value,
+        local: container.querySelector('#local').value,
         morada: container.querySelector('#morada').value,
         pap: container.querySelector('#pap').value,
-        manutencao: container.querySelector('#manutencao').value
+        manutencao: container.querySelector('#manutencao').value,
+        ocupacao: container.querySelector('#ocupacao').value,
+        freguesia: container.querySelector('#freg').value
     };
 
     if (!treeId) {
@@ -435,22 +480,24 @@ document.getElementById('updateTreeButton').onclick = async function() {
 
         const result = await response.json();
 
+        // Check if the server actually returned a success status (200-299)
         if (response.ok) {
-            alert(result.message);
-
-            // 1. Clear the map to focus on the edit
-            treeLayer.clearLayers();
-
-            // 2. Fetch the specific updated tree to get its current geometry
+            
+            // 1. Fetch the specific updated tree to confirm it exists and get geometry
             const detailRes = await fetch(`${API_BASE_URL}/tree/${treeId}`);
             const tree = await detailRes.json();
             
-            if (!tree.error) {
+            if (tree && !tree.error) {
+                alert(result.message); // Show success only if we found the tree details
+
+                // 2. NOW clear the map to focus on the edit
+                treeLayer.clearLayers();
+
                 const geom = JSON.parse(tree.geometry);
                 const lat = geom.coordinates[1];
                 const lon = geom.coordinates[0];
 
-                // 3. Add the updated tree with a different color
+                // 3. Add the updated tree marker
                 const updatedMarker = L.circleMarker([lat, lon], {
                     radius: 9, 
                     fillColor: "#e67e22",
@@ -459,20 +506,30 @@ document.getElementById('updateTreeButton').onclick = async function() {
                     fillOpacity: 1
                 }).addTo(treeLayer);
 
-                // 4. Update Popup to show the new data
+                // 4. Update Popup
                 updatedMarker.bindPopup(`
                     <div style="font-family: sans-serif;">
-                        <h4 style="margin:0; color:#e67e22;">Updated Tree #${tree.tree_id}</h4>
+                        <h4 style="margin:0; color:#e67e22;">Updated Tree #${treeId}</h4>
                         <hr>
-                        <b>New Name:</b> ${payload.nome_vulga}<br>
-                        <b>New Species:</b> ${payload.especie}
+                        <b>Common Name:</b> ${payload.nome_vulga || 'N/A'}<br>
+                        <b>Species:</b> <i>${payload.especie || 'N/A'}</i><br>
+                        <b>Typology:</b> ${payload.tipologia || 'N/A'}<br>
+                        <b>PAP:</b> ${payload.pap || 'N/A'}<br>
+                        <b>Authority:</b> ${payload.manutencao || 'N/A'}<br>
+                        <b>Occupation:</b> ${payload.ocupacao || 'N/A'}<br>
+                        <b>Local:</b> ${payload.local || 'N/A'}<br>
+                        <b>Address:</b> ${payload.morada || 'N/A'}<br>
+                        <b>Freguesia:</b> ${payload.freguesia || 'N/A'}
                     </div>
                 `).openPopup();
 
-                // 5. Zoom to the point
                 map.flyTo([lat, lon], 18);
+            } else {
+                // If the update worked but fetch failed, don't clear the map
+                alert("Update processed, but could not retrieve tree location.");
             }
         } else {
+            // This handles the 404 from your Python API
             alert("Error: " + (result.error || "Update failed"));
         }
     } catch (error) {
@@ -580,7 +637,9 @@ document.getElementById('addMaintButton').onclick = async function() {
                             <hr>
                             <b>Tree ID:</b> ${treeId}<br>
                             <b>Op Code:</b> ${payload.op_code}<br>
-                            <b>Officer:</b> ${payload.officer}
+                            <b>Officer:</b> ${payload.officer}<br>
+                            <b>Date:</b> ${new Date(payload.maint_date).toLocaleDateString()}<br>
+                            <p style="margin: 5px 0; font-style: italic;">"${payload.observation || 'No comments'}"</p>
                         </div>
                     `)
                     .openOn(map);

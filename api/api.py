@@ -103,12 +103,19 @@ def edit_tree(id):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
+        # 1. Check if the tree exists first
+        cur.execute("SELECT tree_id FROM pa.trees WHERE tree_id = %s", (id,))
+        if cur.fetchone() is None:
+            return jsonify({"error": f"Tree ID {id} does not exist. Cannot update."}), 404
+
+        # 2. Proceed with the update if it exists
         cur.execute("""
             UPDATE pa.trees 
-            SET nome_vulga = %s, especie = %s, tipologia = %s, morada = %s, pap = %s, manutencao = %s
+            SET nome_vulga = %s, especie = %s, tipologia = %s, local = %s, morada = %s, pap = %s, manutencao = %s, ocupacao = %s, freguesia = %s
             WHERE tree_id = %s
         """, (data.get('nome_vulga'), data.get('especie'), data.get('tipologia'), 
-              data.get('morada'), data.get('pap'), data.get('manutencao'), id))
+              data.get('local'), data.get('morada'), data.get('pap'), data.get('manutencao'), 
+              data.get('ocupacao'), data.get('freguesia'), id))
         
         conn.commit()
         return jsonify({"message": f"Tree {id} updated successfully"})
@@ -210,17 +217,38 @@ def get_trees_near():
 @app.route('/tree', methods=['POST'])
 def create_tree():
     data = request.json
+    tree_id = data.get('tree_id')
+
+    # Basic Validation
+    if not tree_id:
+        return jsonify({"error": "Missing Tree ID"}), 400
+
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO pa.trees (tree_id, nome_vulga, especie, tipologia, freguesia, geometry)
-        VALUES (%s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
-    """, (data['tree_id'], data['nome_vulga'], data['especie'], data['tipologia'], 
-          data['freguesia'], data['lon'], data['lat']))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"message": "Tree created successfully"}), 201
+
+    try:
+        # Check if the Tree ID already exists
+        cur.execute("SELECT tree_id FROM pa.trees WHERE tree_id = %s", (tree_id,))
+        if cur.fetchone():
+            return jsonify({"error": f"Tree ID {tree_id} already exists in the database."}), 409
+
+        # If it doesn't exist, proceed with the INSERT
+        cur.execute("""
+            INSERT INTO pa.trees (tree_id, especie, nome_vulga, tipologia, local, morada, pap, manutencao, ocupacao, freguesia, geometry)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
+        """, (tree_id, data.get('especie'), data.get('nome_vulga'), data.get('tipologia'), 
+              data.get('local'), data.get('morada'), data.get('pap'), data.get('manutencao'), 
+              data.get('ocupacao'), data.get('freguesia'), data.get('lon'), data.get('lat')))
+        
+        conn.commit()
+        return jsonify({"message": "Tree created successfully"}), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
