@@ -114,7 +114,7 @@ def write_geojson(gdf: gpd.GeoDataFrame, fname: str) -> None:
 # -------Load Shapefile Function------
 
 def load_shapefile(fname: str, config: dict):
-     """
+    """
     Load a Shapefile into a PostgreSQL/PostGIS table.
 
     This function reads a Shapefile using GeoPandas, transforms its coordinate
