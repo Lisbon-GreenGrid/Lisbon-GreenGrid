@@ -4,7 +4,7 @@ import logging
 
 # Initialize logger
 def init_logger() -> None:
-     """
+    """
     Initialize and configure a logger for the ETL pipeline.
 
     This function sets up a logger named 'gps-logger' with the following configuration:
