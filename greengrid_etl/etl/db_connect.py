@@ -59,7 +59,8 @@ class DBController:
         Raises:
             Exception: If any database operation fails, the transaction is rolled back
         and the exception is raised.
-    """
+        
+        """
         try:
             engine = sql.create_engine(self.uri)
             with engine.connect() as con:
