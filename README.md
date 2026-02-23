@@ -158,7 +158,7 @@ CRUD operations is exposed through the API and executed against the relational d
 | GET    | `/tree/{id}/comments`           | Get comment history (with limit)      |
 | GET    | `/tree/{id}/maintenance`        | Get maintenance history (with limit)  |
 | POST   | `/trees`                        | Insert a new tree                     |
-| POST   | `/tree/{id}/comment             | Add a new comment                     |
+| POST   | `/tree/{id}/comment`             | Add a new comment                     |
 | POST   | `/tree/{id}/maintenance`        | Add a new maintenance status          |
 | PUT    | `/trees/{id}`                   | Update a tree                         |
 | DELETE | `/trees/{id}`                   | Delete a tree                         |
@@ -194,11 +194,11 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 | ①`Retractable sidebar and dynamic basemap`| <img src="./Asset/gif_1.gif">|
 | ②`Filter Trees by Name`| <img src="./Asset/gif_2.gif">|
 | ③`Filter Trees by Parish`| <img src="./Asset/gif_3.gif">|
-| ④`Find a specific Tree by ID`| <img src="">|
-| ⑤`Find nearest Trees within a buffer`| <img src="">|
-| ⑥`Create a new Tree record`| <img src="">|
-| ⑦`Update an existing Tree record`| <img src="">|
-| ⑧`Delete removed Tree`| <img src="">|
+| ④`Find a specific Tree by ID`| <img src="./Asset/gif_4.gif">|
+| ⑤`Find nearest Trees within a buffer`| <img src="./Asset/gif_5.gif">|
+| ⑥`Create a new Tree record`| <img src="./Asset/gif_6.gif">|
+| ⑦`Update an existing Tree record`| <img src="./Asset/gif_7.gif">|
+| ⑧`Delete removed Tree`| <img src="./Asset/gif_8.gif">|
 | ⑨`Add a new Tree maintenance record`| <img src="./Asset/gif_9.gif">|
 | ⑩`View Maintenance record of a Tree`| <img src="./Asset/gif_10.gif">|
 | ⑪`Add a new comment to a specific Tree`| <img src="./Asset/gif_11.gif">|
@@ -210,8 +210,11 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 ---
 
 ## 11. Future Direction
-- User dedicated page for sign-up and Usage
-- Enhance User Experience & Accessibility
+- Dedicated page for sign-up and data security
+- Defined boundaries between Admin and User roles
+- Enhanced User Interface & Experience (UI/UX)
+- Improved Pagination for easy assessibility
+- Implementation of complex queries within API 
 
 ---
 
