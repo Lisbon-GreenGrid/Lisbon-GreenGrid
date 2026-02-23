@@ -1,14 +1,15 @@
-This documentation provides a comprehensive overview of the Lisbon GreenGrid API, a specialized RESTful service designed for urban forest management. Developed using Flask and PostGIS, the system facilitates the management of spatial and attribute data for trees located within the municipality of Lisbon.
+# Lisbon GreenGrid API
 
+This documentation provides a comprehensive overview of the Lisbon GreenGrid API, a specialized RESTful service designed for urban forest management. Developed using Flask and PostGIS, the system facilitates the management of spatial and attribute data for trees located within the municipality of Lisbon.
 
 
 ## Technical Architecture
 
-The system utilizes a Python-based Flask framework to interface with a PostgreSQL database. Spatial capabilities are provided by the PostGIS extension, allowing for geographic coordinate storage and proximity-based queries using the ETRS89 / Portugal TM06 (interpreted here as WGS 84, EPSG:4326) coordinate system.
+The system utilizes a Python-based Flask framework to interface with a PostgreSQL database. Spatial capabilities are provided by the PostGIS extension, allowing for geographic coordinate storage and proximity-based queries using the WGS 84, EPSG:4326) coordinate system.
 
 Tech Stack:
 * **Backend: Flask 3.x
-* Database: PostgreSQL 15+ with PostGIS 3.x
+* Database: PostgreSQL 16+ with PostGIS 3.x
 * Database Adapter: Psycopg2 (RealDictCursor)
 * Spatial Functions: ST_AsGeoJSON, ST_DWithin, ST_MakePoint
 
@@ -39,7 +40,7 @@ conda install --file requirements.txt
 
 3. Execution
 
-Run the application via the Python interpreter:
+Run the application via VScode or the Python interpreter:
 
 ```bash
 python api/api.py
@@ -55,6 +56,7 @@ The service defaults to `http://127.0.0.1:5000`.
 ## Tree Management
 
 | Method | Endpoint | Description |
+| --- | --- | --- |
 | GET | `/trees` | Returns a collection of all trees with GeoJSON geometry. |
 | GET | `/tree/<id>` | Returns detailed attributes for a specific tree ID. |
 | POST | `/tree` | Creates a new tree record. Requires JSON with coordinates. |
@@ -67,10 +69,13 @@ The service defaults to `http://127.0.0.1:5000`.
 | --- | --- | --- |
 | GET | `/tree/<id>/maintenance` | Retrieves the maintenance history, including officer and observations. |
 | POST | `/tree/<id>/maintenance` | Records a new maintenance event (linked to op_code). |
+| GET | `/tree/<id>/comments` | Retrieves comment history. |
+| POST | `/tree/<id>/comment` | Records a new comment. |
 
 ## Spatial and Filter Queries
 
 | Method | Endpoint | Description |
+| --- | --- | --- |
 | GET | `/trees/near` | Proximity search. Params: `lat`, `lon`, `radius` (in meters). |
 | GET | `/trees/freguesia/<name>` | Case-insensitive search by Lisbon parish name. |
 | GET | `/trees/species/<name>` | Search by botanical or common species name. |
