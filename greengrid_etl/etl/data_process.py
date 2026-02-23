@@ -1,3 +1,4 @@
+# Import required modules and libraries
 from .logs import die, info
 from .config import read_config
 import requests
@@ -14,15 +15,30 @@ host= config["database"]["host"]
 port= config["database"]["port"]
 database= config["database"]["database"]
 
+
+# ------------------------------------
+# -------Download Data Function-------
+
 def download_data(url: str, fname: str) -> None:
-    """Downloads data from URL and store it in a local file
+    """
+    Download data from a given URL and save it to a local file.
+
+    This function performs an HTTP GET request to fetch the content from the 
+    specified URL and writes it to a local file in binary mode. If an error 
+    occurs during the download or file writing, the function calls `die()` 
+    with the exception message.
 
     Args:
-        url: url with location of the original data
-        fname (str): the name of the data file to save locally
-
+        url (str): The URL of the data to download.
+        fname (str): The local filename (including path) where the downloaded 
+            data will be saved.
     Returns:
         None
+
+    Raises:
+        Exception: Any exception encountered during the HTTP request or file 
+            write operation is propagated via the `die()` function.
+
     """
     try:
         r = requests.get(url, allow_redirects=True)
@@ -32,14 +48,26 @@ def download_data(url: str, fname: str) -> None:
         die(f"{e}")
 
 
+# ------------------------------------
+# --------Read GeoJSON Function-------
+
 def read_geojson(fname: str,) -> gpd.GeoDataFrame:
-    """Reads a GeoJSON file into a GeoPandas dataframe
+    """
+    Read a GeoJSON file into a GeoPandas GeoDataFrame.
+
+    This function loads a GeoJSON file from disk and returns it
+    as a GeoDataFrame. If the file cannot be read or is invalid,
+    the function will terminate execution via the `die` handler.
 
     Args:
-        fname (str): the name of the GeoJSON file
+        fname (str): Path to the GeoJSON file to read.
 
-    Returns:
-        gpd.GeoDataFrame: a geodataframe
+    Return:
+        gpd.GeoDataFrame: A GeoPandas GeoDataFrame containing the features from the file.
+
+    Raises:
+        SystemExit: If reading the GeoJSON file fails, the `die` function is called
+        and the program exits with an error message.
     """
     try:
         gdf = gpd.read_file(fname)
@@ -48,15 +76,30 @@ def read_geojson(fname: str,) -> gpd.GeoDataFrame:
     return gdf
 
 
+# ------------------------------------
+# -------Write GeoJSON Function-------
+
 def write_geojson(gdf: gpd.GeoDataFrame, fname: str) -> None:
-    """ Writes a GeoPandas dataframe into a GeoJSON file
+    """
+    Writes a GeoPandas GeoDataFrame to a GeoJSON file.
+
+    This function serializes the provided GeoDataFrame into a GeoJSON
+    format file on disk. If the write operation fails, the function
+    logs the error and terminates execution via the `die` function.
 
     Args:
-        gdf (gpd.GeoDataFrame): the geodataframe
-        fname (str): the file name
-        
-    Returns:
-        None
+        gdf (gpd.GeoDataFrame): The GeoDataFrame to write to disk.
+        fname (str): The full file path (including filename) where
+            the GeoJSON should be saved.
+
+    Raises:
+        SystemExit: If an exception occurs during the file write,
+            the function calls `die()` and exits the program.
+
+    Example:
+        >>> import geopandas as gpd
+        >>> gdf = gpd.read_file("input.csv")
+        >>> write_geojson(gdf, "output.geojson")
     """
     try:
         gdf.to_file(
@@ -65,16 +108,29 @@ def write_geojson(gdf: gpd.GeoDataFrame, fname: str) -> None:
         )
     except Exception as e:
         die(f"write_geojson: {e}")
-
-
         
+
+# ------------------------------------
+# -------Load Shapefile Function------
+
 def load_shapefile(fname: str, config: dict):
-    """
-    Reads a Shapefile into a Geopandas dataframe,
-    Transforms the data and Load the data into the table.
+     """
+    Load a Shapefile into a PostgreSQL/PostGIS table.
+
+    This function reads a Shapefile using GeoPandas, transforms its coordinate
+    reference system to EPSG:4326, and loads the data into the 
+    "pa.parish" table in the configured PostgreSQL/PostGIS database.
+    Existing data in the table will be replaced.
 
     Args:
-        fname (str): the file name
+        fname (str): Path to the Shapefile (.shp) to load.
+        config (dict): Configuration dictionary containing database connection
+            parameters.
+
+    Raises:
+        Exception: If reading the file, transforming, or loading into the
+            database fails. Errors are logged before being raised.
+            
     """
     try:
         info("Starting shapefile load into 'parish' table.")
@@ -82,7 +138,8 @@ def load_shapefile(fname: str, config: dict):
 
         # Transform shapefile data (similar to trees)
         gdf = gdf.to_crs('EPSG:4326')
-      
+
+        # Establish connection and load to database
         engine = create_engine(
            f"postgresql://{username}:{password}@{host}:{port}/{database}"
         )
@@ -103,18 +160,28 @@ def load_shapefile(fname: str, config: dict):
         raise
 
 
+# ------------------------------------
+# ------Normalize Column Function-----
+
 def normalize_column_name(column_name: str) -> str:
     """
-    Normalize column names for PostgreSQL compatibility.
+    Normalize a column name to be PostgreSQL-compatible.
+
+    This function converts the column name to lowercase, replaces 
+    whitespace with underscores, and removes any non-alphanumeric 
+    characters, ensuring the name is safe for use in PostgreSQL tables.
 
     Args:
-        column_name (str): the initial column name
+        column_name (str): The original column name to normalize.
 
-    Return:
-        column_name (str): postgresql normalized column name
+    Returns:
+        str: A normalized column name compatible with PostgreSQL.
+    
+    Example:
+        >>> normalize_column_name("User Name!")
+        'user_name'
     """
-    column_name = column_name.lower()
-    column_name = re.sub(r"\s+", "_", column_name)
-    column_name = re.sub(r"[^\w]", "", column_name)
+    column_name = column_name.lower()   # Convert to lowercase
+    column_name = re.sub(r"\s+", "_", column_name) # Replace any whitespace (spaces, tabs, etc.) with underscores
+    column_name = re.sub(r"[^\w]", "", column_name) # Remove any character that is not a letter, number, or underscore
     return column_name
-
