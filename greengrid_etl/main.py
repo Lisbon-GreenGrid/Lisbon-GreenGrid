@@ -17,7 +17,7 @@ TARGET_SRID = 4326    # For reproducibility replace with desired EPSG code.
 
 
 def extraction(config: dict) -> None:
-   """
+    """
     Download raw data in GEOJSON from an API into the .data/original directory.
 
     Args:
@@ -126,7 +126,7 @@ def transformation(config: dict) -> None:
 
 
 def load(config: dict, chunksize: int=1000) -> None:
-   """
+    """
     Executes the load phase of the ETL pipeline.
     
     This function reads the processed GeoJSON dataset and inserts it
@@ -185,7 +185,7 @@ def parse_args() -> str:
 
 
 def time_this_function(func, **kwargs) -> str:
-     """
+    """
     Measure and report the execution time of a callable.
 
     Executes the provided function with the supplied keyword arguments
