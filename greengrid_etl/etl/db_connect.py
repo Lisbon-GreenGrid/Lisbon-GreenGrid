@@ -1,3 +1,4 @@
+# Import required modules and libraries
 from .logs import die
 import sqlalchemy as sql
 import geoalchemy2
@@ -15,13 +16,23 @@ class DBController:
         self.uri = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
 
     def select_data(self, query: str) -> pd.DataFrame:
-        """This functions abstracts the `SELECT` queries
+        """
+        Execute a SQL SELECT query and return the results as a Pandas DataFrame.
+
+        This method abstracts the database querying process by:
+        1. Establishing a connection to the database using SQLAlchemy.
+        2. Executing the provided SELECT query.
+        3. Returning the results as a DataFrame.
 
         Args:
-            query (str): the select query to be executed
+            query (str): The SQL SELECT query to execute.
 
         Returns:
-            pd.DataFrame: the selection
+            pd.DataFrame: A Pandas DataFrame containing the query results.
+
+        Raises:
+            SystemExit: If the query execution fails, the function calls `die()` with the error message.
+            
         """
         try:
             con = sql.create_engine(self.uri)
@@ -30,15 +41,25 @@ class DBController:
             die(f"select_data: {e}")
         return df
 
+    
     def insert_data(self, gdf: gpd.GeoDataFrame, schema: str, table: str, chunksize: int=100) -> None:
-        """This function abstracts the `INSERT` queries
+        """
+        Insert a GeoDataFrame into a PostGIS table, truncating the table beforehand.
+
+        This function abstracts the INSERT operation for PostGIS, handling
+        database connection, transaction management, and chunked insertion.
+        The target table is cleared before insertion while keeping database triggers intact.
 
         Args:
-            gdf (gpd.GeoDataFrame): geodataframe to be inserted
-            schema (str): the name of the schema
-            table (str): the name of the table
-            chunksize (int): the number of rows to insert at the time
-        """
+            gdf (gpd.GeoDataFrame): The GeoDataFrame containing spatial data to insert.
+            schema (str): The database schema where the table resides.
+            table (str): The name of the target table.
+            chunksize (int): Number of rows to insert per batch. Default is 100.
+
+        Raises:
+            Exception: If any database operation fails, the transaction is rolled back
+        and the exception is raised.
+    """
         try:
             engine = sql.create_engine(self.uri)
             with engine.connect() as con:
