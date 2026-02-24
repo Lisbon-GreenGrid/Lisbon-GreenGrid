@@ -166,7 +166,7 @@ CRUD operations is exposed through the API and executed against the relational d
 | GET    | `/trees/freguesia/{name}`       | Get trees within a freguesia          |
 | GET    | `/trees/species/{species}`      | Get trees by species                  |
 
-The spatial query endpoint demonstrates the proposed use of PostGIS for distance-based searches. Fined the details on [API README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/api/README.md)
+The spatial query endpoint demonstrates the use of PostGIS for distance-based searches. Fined the details on [API README](https://github.com/Lisbon-GreenGrid/Lisbon-GreenGrid/blob/main/api/README.md)
 
 ---
 
@@ -174,10 +174,10 @@ The spatial query endpoint demonstrates the proposed use of PostGIS for distance
 
 1. **Database Setup.** Navigate to the `greengrid_db` folder and execute the following in order:
 - `00-create_db.sql` in pgAdmin
-- `create_db.py` in the default a python environment (creates schemas, tables, indexes and triggers)
+- `create_db.py` in the default python environment (creates schemas, tables, indexes, and triggers)
 - `06-data.sql` in pgAdmin after the execution of the ETL package.
   
-2. **Environment Setup.** For both the ETL and API, install dependecies from either the `requirements.txt` or `environment.yml`. Follow the information available in their respective README section. Do not forget to input your database password in the `config/00.yml` file.
+2. **Environment Setup.** For both the ETL and API, install dependencies from either the `requirements.txt` or `environment.yml`. Follow the information available in their respective README section. Do not forget to input your database password in the `config/00.yml` file.
 
 4. **ETL Process.** Navigate to the `greengrid_etl` folder and run `main.py`.
 
