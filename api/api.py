@@ -1,18 +1,39 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import os
+from werkzeug.utils import secure_filename
+import json
+import csv
+import io
 
 app = Flask(__name__)
 CORS(app)
 
-# Database configuration based on your setup
+UPLOAD_FOLDER = os.path.join(app.root_path, 'uploaded_images')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_data_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'json', 'csv'}
+
+# Database configuration - load from environment variables
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 DB_CONFIG = {
-    "database": "lisbon_greengrid",
-    "user": "postgres",
-    "password": "postgres",
-    "host": "localhost",
-    "port": "5432"
+    "database": os.getenv("DB_NAME", "ncdc_greengrid"),
+    "user": os.getenv("DB_USER", "postgres"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST", "localhost"),
+    "port": os.getenv("DB_PORT", "5432")
 }
 
 def get_db_connection():
@@ -40,11 +61,76 @@ def get_tree_details(id):
         WHERE tree_id = %s
     """, (id,))
     tree = cur.fetchone()
+
+    if tree:
+        cur.execute("SELECT image_id, file_name, file_path FROM pa.tree_images WHERE tree_id = %s ORDER BY uploaded_at DESC", (id,))
+        images = cur.fetchall()
+        for image in images:
+            image["file_url"] = request.host_url.rstrip('/') + '/tree-images/' + image["file_path"]
+        tree["images"] = images
+
     cur.close()
     conn.close()
     return jsonify(tree if tree else {"error": "Tree not found"})
 
-# 3. GET COMMENT HISTORY BY TREE ID (with optional 'limit' parameter)
+# 3. GET TREE IMAGE LIST
+@app.route('/tree/<int:id>/images', methods=['GET'])
+def get_tree_images(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT image_id, file_name, file_path FROM pa.tree_images WHERE tree_id = %s ORDER BY uploaded_at DESC", (id,))
+    images = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    for image in images:
+        image["file_url"] = request.host_url.rstrip('/') + '/tree-images/' + image["file_path"]
+
+    return jsonify(images)
+
+# 4. UPLOAD A TREE IMAGE
+@app.route('/tree/<int:id>/image', methods=['POST'])
+def upload_tree_image(id):
+    if 'image' not in request.files:
+        return jsonify({"error": "No image file provided"}), 400
+
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Unsupported file type"}), 400
+
+    filename = secure_filename(file.filename)
+    tree_folder = os.path.join(UPLOAD_FOLDER, f'tree_{id}')
+    os.makedirs(tree_folder, exist_ok=True)
+    save_path = os.path.join(tree_folder, filename)
+
+    file.save(save_path)
+
+    relative_path = os.path.relpath(save_path, app.root_path).replace('\\', '/')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO pa.tree_images (tree_id, file_name, file_path) VALUES (%s, %s, %s)",
+                    (id, filename, relative_path))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+
+    cur.close()
+    conn.close()
+    return jsonify({"message": "Image uploaded successfully", "file_url": request.host_url.rstrip('/') + '/tree-images/' + relative_path}), 201
+
+# 5. Static route for uploaded images
+@app.route('/tree-images/<path:filename>', methods=['GET'])
+def serve_tree_image(filename):
+    return send_from_directory(app.root_path, filename)
+
+# 6. GET COMMENT HISTORY BY TREE ID (with optional 'limit' parameter)
 @app.route('/tree/<int:id>/comments', methods=['GET'])
 def get_comment_history(id):
     # default limit is 10 if not provided
@@ -252,3 +338,126 @@ def create_tree():
 
 if __name__ == '__main__':
     app.run(debug=True)
+# 13. BULK IMPORT JSON
+@app.route('/bulk-import/json', methods=['POST'])
+def bulk_import_json():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '' or not allowed_data_file(file.filename):
+        return jsonify({"error": "Invalid file type. Only JSON and CSV are allowed."}), 400
+
+    try:
+        content = file.read().decode('utf-8')
+        trees_data = json.loads(content)
+        
+        if not isinstance(trees_data, list):
+            return jsonify({"error": "JSON must be an array of tree objects"}), 400
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        inserted = 0
+        errors = []
+
+        for tree in trees_data:
+            try:
+                tree_id = tree.get('tree_id')
+                if not tree_id:
+                    errors.append("Missing tree_id")
+                    continue
+
+                lat = tree.get('lat')
+                lon = tree.get('lon')
+                if lat is None or lon is None:
+                    errors.append(f"Tree {tree_id}: missing lat/lon")
+                    continue
+
+                cur.execute("""
+                    INSERT INTO pa.trees (tree_id, especie, nome_vulga, tipologia, local, morada, pap, manutencao, ocupacao, freguesia, geometry)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
+                    ON CONFLICT (tree_id) DO NOTHING
+                """, (tree_id, tree.get('especie', ''), tree.get('nome_vulga', f"Tree {tree_id}"),
+                      tree.get('tipologia', ''), tree.get('local', ''), tree.get('morada', ''),
+                      tree.get('pap'), tree.get('manutencao', ''), tree.get('ocupacao', ''),
+                      tree.get('freguesia', ''), lon, lat))
+                inserted += 1
+            except Exception as e:
+                errors.append(f"Tree {tree.get('tree_id', 'unknown')}: {str(e)}")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": f"Imported {inserted} trees", "errors": errors[:10]}), 201
+    except json.JSONDecodeError:
+        return jsonify({"error": "Invalid JSON format"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# 14. BULK IMPORT CSV
+@app.route('/bulk-import/csv', methods=['POST'])
+def bulk_import_csv():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '' or not allowed_data_file(file.filename):
+        return jsonify({"error": "Invalid file type. Only JSON and CSV are allowed."}), 400
+
+    try:
+        content = file.read().decode('utf-8')
+        csv_reader = csv.DictReader(io.StringIO(content))
+        
+        if csv_reader.fieldnames is None:
+            return jsonify({"error": "Invalid CSV format"}), 400
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        inserted = 0
+        errors = []
+
+        for row in csv_reader:
+            try:
+                tree_id = row.get('tree_id')
+                if not tree_id:
+                    errors.append("Missing tree_id in row")
+                    continue
+
+                lat = row.get('lat')
+                lon = row.get('lon')
+                if not lat or not lon:
+                    errors.append(f"Tree {tree_id}: missing lat/lon")
+                    continue
+
+                try:
+                    lat = float(lat)
+                    lon = float(lon)
+                except ValueError:
+                    errors.append(f"Tree {tree_id}: lat/lon must be numeric")
+                    continue
+
+                pap = row.get('pap')
+                if pap:
+                    try:
+                        pap = float(pap)
+                    except ValueError:
+                        pap = None
+
+                cur.execute("""
+                    INSERT INTO pa.trees (tree_id, especie, nome_vulga, tipologia, local, morada, pap, manutencao, ocupacao, freguesia, geometry)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
+                    ON CONFLICT (tree_id) DO NOTHING
+                """, (tree_id, row.get('especie', ''), row.get('nome_vulga', f"Tree {tree_id}"),
+                      row.get('tipologia', ''), row.get('local', ''), row.get('morada', ''),
+                      pap, row.get('manutencao', ''), row.get('ocupacao', ''),
+                      row.get('freguesia', ''), lon, lat))
+                inserted += 1
+            except Exception as e:
+                errors.append(f"Row error: {str(e)}")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": f"Imported {inserted} trees", "errors": errors[:10]}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
