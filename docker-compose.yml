@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: ncdc_postgres
+    environment:
+      POSTGRES_DB: ncdc_greengrid
+      POSTGRES_USER: ncdc_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./greengrid_db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ncdc_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ncdc_network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ncdc_api
+    environment:
+      DB_NAME: ncdc_greengrid
+      DB_USER: ncdc_admin
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      FLASK_ENV: ${FLASK_ENV:-development}
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./api/uploaded_images:/app/uploaded_images
+    networks:
+      - ncdc_network
+    restart: unless-stopped
+
+  # Optional: Web interface
+  web:
+    image: node:18-alpine
+    container_name: ncdc_web
+    working_dir: /app
+    volumes:
+      - ./greengrid_web:/app
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev"
+    environment:
+      VITE_API_URL: http://localhost:5000
+    networks:
+      - ncdc_network
+    restart: unless-stopped
+
+  # Optional: pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ncdc_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - ncdc_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  ncdc_network:
+    driver: bridge
